@@ -30,8 +30,8 @@ namespace adrian
          */
         ArduinoSingleWire() :
             m_data_pin(0),
-            m_frequency(1000000),
-            m_bit_order()
+            m_frequency(MHz),
+            m_bit_order(BIT_ORDER_LSB_FIRST)
         {
             // Do nothing
         }
@@ -52,16 +52,22 @@ namespace adrian
         /** Set the frequency in Hertz */
         virtual void SetFrequency(const uint32_t frequency)
         {
-
+            m_frequency = frequency;
         }
 
         /** Set the bit order (see BitOrder) */
-        virtual void SetBitOrder(const BitOrder order) = 0;
+        virtual void SetBitOrder(const BitOrder bit_order)
+        {
+            m_bit_order = bit_order;
+        }
 
         /** Perform a single half-duplex transfer */
         virtual void Transfer(
             const uint8_t *tx_buf,
-            const uint8_t num_bytes) = 0;
+            const uint8_t num_bytes)
+        {
+            // TODO
+        }
 
     private:
         uint32_t m_data_pin;    //< Pin number of data pin

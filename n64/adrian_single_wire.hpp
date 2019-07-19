@@ -56,7 +56,7 @@ namespace adrian
         virtual void SetFrequency(const uint32_t frequency) = 0;
 
         /** Set the bit order (see BitOrder) */
-        virtual void SetBitOrder(const BitOrder order) = 0;
+        virtual void SetBitOrder(const BitOrder bit_order) = 0;
 
         /** Perform a single half-duplex transfer */
         virtual void Transfer(
