@@ -5,17 +5,29 @@
  * Copyright 2019
  */
 
-
 #ifndef ADRIAN_HELPERS_HPP_
 #define ADRIAN_HELPERS_HPP_
-
 
 /* ===== Includes ===== */
 #include <stdint.h>
 
-
 namespace adrian
 {
+    /* ===== Constants ===== */
+    const uint32_t KHz = 1000;
+    const uint32_t MHz = 1000000;
+
+
+    /* ===== Enums ===== */
+
+    /** The bit order (big endian or little endian) */
+    enum BitOrder
+    {
+        BIT_ORDER_MSB_FIRST = 0,
+        BIT_ORDER_LSB_FIRST = 1,
+    };
+
+
     /* ===== Functions ===== */
 
     /* Bit Manipulation */
@@ -39,6 +51,5 @@ namespace adrian
     }
 
 }   // end namespace adrian
-
 
 #endif  // ADRIAN_HELPERS_HPP_

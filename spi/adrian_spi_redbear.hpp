@@ -1,30 +1,27 @@
 /**
- * File:    adrian_spi_nrf.hpp
+ * File:    adrian_spi_redbear.hpp
  * Author:  padin.adrian@gmail.com
  *
  * Copyright 2019
  */
 
-
 #ifndef ADRIAN_SPI_REDBEAR_HPP_
 #define ADRIAN_SPI_REDBEAR_HPP_
 
-
 /* ===== Includes ===== */
-#include "adrian_spi.hpp"
+#include "spi/adrian_spi.hpp"
 #include "spi_master_redbear.hpp"
-
 
 namespace adrian
 {
     /**
-     *
+     * SPI implmentation for RedBear Labs BLE Nano.
      */
     class RedbearSPI : public adrian::SPI
     {
     public:
         /**
-         * Constructor: pass either NRF_SPI0 or NRF_SPI1
+         * Constructor: pass either NRF_SPI0 or NRF_SPI1.
          * See "mbed.h" for more details.
          */
         RedbearSPI(NRF_SPI_Type *_spi) : spi_impl(_spi)
@@ -98,7 +95,7 @@ namespace adrian
         }
 
         /** Set the bit order (see SPI::BitOrder) */
-        virtual void SetBitOrder(const SPI::BitOrder order)
+        virtual void SetBitOrder(const BitOrder order)
         {
             switch (order)
             {
@@ -118,6 +115,5 @@ namespace adrian
     };
 
 }   // end namespace adrian
-
 
 #endif  // ADRIAN_SPI_REDBEAR_HPP_

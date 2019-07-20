@@ -5,14 +5,11 @@
  * Copyright 2019
  */
 
-
 #ifndef ADRIAN_SPI_HPP_
 #define ADRIAN_SPI_HPP_
 
-
 /* ===== Includes ===== */
-#include <stdint.h>
-
+#include "adrian_helpers.hpp"
 
 namespace adrian
 {
@@ -25,11 +22,6 @@ namespace adrian
     class SPI
     {
     public:
-        /* ===== Constants ===== */
-        static const uint32_t KHz = 1000;
-        static const uint32_t MHz = 1000000;
-
-
         /* ===== Enums ===== */
 
         /** The SPI mode (CPOL and CPHA) */
@@ -40,14 +32,6 @@ namespace adrian
             TRANSFER_MODE_2 = 2,    // CPOL = 1, CPHA = 0
             TRANSFER_MODE_3 = 3,    // CPOL = 1, CPHA = 1
         };
-
-        /** The bit order (big endian or little endian) */
-        enum BitOrder
-        {
-            BIT_ORDER_MSB_FIRST = 0,
-            BIT_ORDER_LSB_FIRST = 1,
-        };
-
 
         /* ===== Functions ===== */
 
@@ -80,6 +64,5 @@ namespace adrian
     };
 
 }   // end namespace adrian
-
 
 #endif  // ADRIAN_SPI_HPP_

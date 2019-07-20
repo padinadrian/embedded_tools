@@ -5,14 +5,12 @@
  * Copyright 2019
  */
 
-
 #ifndef ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
 #define ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
 
-
 /* ===== Includes ===== */
-#include "adrian_single_wire.hpp"
-
+#include <Arduino.h>
+#include "embedded_tools/n64/adrian_single_wire.hpp"
 
 namespace adrian
 {
@@ -49,24 +47,43 @@ namespace adrian
         /** Release the interface (does nothing). */
         virtual void Release() {}
 
-        /** Set the frequency in Hertz */
+        /** Set the frequency in Hertz. */
         virtual void SetFrequency(const uint32_t frequency)
         {
             m_frequency = frequency;
+            Serial.begin(m_frequency * 4);
         }
 
-        /** Set the bit order (see BitOrder) */
+        /** Set the bit order (see BitOrder). */
         virtual void SetBitOrder(const BitOrder bit_order)
         {
             m_bit_order = bit_order;
         }
 
-        /** Perform a single half-duplex transfer */
-        virtual void Transfer(
-            const uint8_t *tx_buf,
-            const uint8_t num_bytes)
+        /** Write bytes over the wire using the Serial interface. */
+        virtual uint8_t Write(
+            const uint8_t tx_buffer[],
+            const uint8_t buffer_size)
         {
             // TODO
+        }
+
+        /** Read bytes over the wire using the Serial interface. */
+        virtual uint8_t ReadBlocking(
+            uint8_t rx_buffer[],
+            const uint8_t buffer_size)
+        {
+            // Spin while waiting for input.
+            while (!Serial.available());
+
+            // Read as if it were serial data.
+            uint8_t serial_rx_buffer[4 * buffer_size];
+            const uint8_t bytes_read = Serial.readBytes(serial_rx_buffer, 4 * buffer_size);
+
+            // Translate from Serial bytes to data bytes.
+            // TODO
+
+            return 0;
         }
 
     private:
@@ -76,6 +93,5 @@ namespace adrian
     };
 
 }   // end namespace adrian
-
 
 #endif  // ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
