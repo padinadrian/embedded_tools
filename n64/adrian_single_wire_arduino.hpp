@@ -51,6 +51,7 @@ namespace adrian
         virtual void SetFrequency(const uint32_t frequency)
         {
             m_frequency = frequency;
+            Serial.begin(m_frequency * 4);
         }
 
         /** Set the bit order (see BitOrder). */
@@ -73,6 +74,24 @@ namespace adrian
 
             // Unblock the line to allow for reading.
             Serial.end();
+        }
+
+        /** Read bytes over the wire using the Serial interface. */
+        virtual uint8_t ReadBlocking(
+            uint8_t rx_buffer[],
+            const uint8_t buffer_size)
+        {
+            // Spin while waiting for input.
+            while (!Serial.available());
+
+            // Read as if it were serial data.
+            uint8_t serial_rx_buffer[4 * buffer_size];
+            const uint8_t bytes_read = Serial.readBytes(serial_rx_buffer, 4 * buffer_size);
+
+            // Translate from Serial bytes to data bytes.
+            // TODO
+
+            return 0;
         }
 
         /** Read bytes over the wire using the Serial interface. */
