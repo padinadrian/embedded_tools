@@ -83,39 +83,46 @@ namespace adrian {
         }
 
         /**
-         * Performs a blocking wait for a command from the console.
+         * Ask the controller to identify itself.
+         * Returns true if the response data is valid, false otherwise.
          */
-        uint8_t WaitForCommand()
+        bool RequestIdentify()
         {
-            // Do a blocking read on the SingleWire interface.
+            SendCommandToController(IDENTIFY);
+            // TODO: handle response
+            return true;
+        }
+
+        /**
+         * Ask the controller to recalibrate the joystick.
+         * Returns true if the response data is valid, false otherwise.
+         */
+        bool RequestRecalibrate()
+        {
+            SendCommandToController(RECALIBRATE);
+            // TODO: handle response
+            return true;
+        }
+
+        /**
+         * Request the current button and joystick status.
+         * Returns true if the response data is valid, false otherwise.
+         */
+        bool RequestButtonData(ButtonState& n64_buttons)
+        {
+            SendCommandToController(RECALIBRATE);
+
+            // Handle the response.
             const uint8_t buffer_size = 4U;
             uint8_t rx_buffer[buffer_size];
-            const uint8_t bytes_read =
-                m_single_wire_ptr->ReadBlocking(rx_buffer, buffer_size);
-
-            // Failure?
-            return rx_buffer[0];
-        }
-
-        /**
-         * Identify
-         */
-        void Identify()
-        {
-            // First two bytes are always the same.
-            // Last byte indicates no controller pack (not supported).
-            const uint8_t identify_response[] = {0x05, 0x00, 0x02};
-            TransmitToConsole(+identify_response, sizeof(identify_response));
-        }
-
-        /**
-         * Send button and joystick data to the console.
-         */
-        void TransmitButtonData(const ButtonState n64_buttons)
-        {
-            uint8_t tx_buffer[sizeof(n64_buttons)];
-            (void)memcpy(tx_buffer, &n64_buttons, sizeof(n64_buttons));
-            TransmitToConsole(+tx_buffer, sizeof(n64_buttons));
+            const uint8_t bytes_read = WaitForResponse(rx_buffer, buffer_size);
+            
+            const bool valid_data = (bytes_read == buffer_size);
+            if (valid_data)
+            {
+                memcpy(&n64_buttons, rx_buffer, buffer_size);
+            }
+            return valid_data;
         }
 
     private:
@@ -123,12 +130,21 @@ namespace adrian {
         /* ===== Private Functions ===== */
 
         /**
-         * Send a series of bytes to the console.
+         * Send a single one-byte command to the controller.
          */
-        void TransmitToConsole(const uint8_t tx_buffer[], const uint8_t num_bytes)
+        void SendCommandToController(const Command command)
         {
             // TODO: This isn't going to work either...
-            m_single_wire_ptr->Transfer(tx_buffer, num_bytes);
+            const uint8_t command_buffer = static_cast<uint8_t>(command);
+            m_single_wire_ptr->Write(&command_buffer, sizeof(command_buffer));
+        }
+
+        /**
+         * Do a blocking read from the controller.
+         */
+        uint8_t WaitForResponse(uint8_t rx_buffer[], const uint8_t buffer_size)
+        {
+            return m_single_wire_ptr->ReadBlocking(rx_buffer, buffer_size);
         }
 
         /* ===== Private Variables ===== */

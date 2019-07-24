@@ -23,9 +23,14 @@ namespace adrian {
         /* ===== Functions ===== */
 
         /**
-         * Constructor: TODO
+         * Constructor - configure the SingleWire interface.
          */
-        N64Console() {}
+        N64Console(SingleWire* single_wire_ptr) :
+            m_single_wire_ptr(single_wire_ptr)
+        {
+            m_single_wire_ptr->SetFrequency(MHz);
+            m_single_wire_ptr->SetBitOrder(BIT_ORDER_LSB_FIRST);
+        }
 
         /**
          * Initialize the communication with the console: TODO
@@ -34,15 +39,18 @@ namespace adrian {
 
         /**
          * Performs a blocking wait for a command from the console.
+         * Returns true if the 
          */
-        uint8_t WaitForCommand()
+        bool WaitForCommand(N64Controller::Command& command)
         {
-            // Wait for command.
-            while (!Serial.available());
+            // Do a blocking read on the SingleWire interface.
+            const uint8_t buffer_size = 4U;
+            uint8_t rx_buffer[buffer_size];
+            const uint8_t bytes_read =
+                m_single_wire_ptr->ReadBlocking(rx_buffer, buffer_size);
 
-            // TODO: sadly it wont be this easy.
-            uint8_t command = Serial.read();
-            return command;
+            command = static_cast<N64Controller::Command>(rx_buffer[0]);
+            return (bytes_read > 0);
         }
 
         /**
@@ -53,13 +61,13 @@ namespace adrian {
             // First two bytes are always the same.
             // Last byte indicates no controller pack (not supported).
             const uint8_t identify_response[] = {0x05, 0x00, 0x02};
-            TransmitToConsole(identify_response, sizeof(identify_response));
+            TransmitToConsole(+identify_response, sizeof(identify_response));
         }
 
         /**
          * Send button and joystick data to the console.
          */
-        void TransmitButtonData(const N64::ButtonState n64_buttons)
+        void TransmitButtonData(const N64Controller::ButtonState n64_buttons)
         {
             uint8_t tx_buffer[sizeof(n64_buttons)];
             (void)memcpy(tx_buffer, &n64_buttons, sizeof(n64_buttons));
@@ -73,10 +81,10 @@ namespace adrian {
         /**
          * Send a series of bytes to the console.
          */
-        void TransmitToConsole(const uint8_t tx_buffer[], const uint8_t num_bytes)
+        void TransmitToConsole(const uint8_t tx_buffer[], const uint8_t buffer_size)
         {
             // TODO: This isn't going to work either...
-            m_single_wire_ptr->Write(tx_buffer, num_bytes);
+            m_single_wire_ptr->Write(tx_buffer, buffer_size);
         }
 
         /* ===== Private Variables ===== */
