@@ -5,14 +5,12 @@
  * Copyright 2019
  */
 
-
 #ifndef ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
 #define ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
 
-
 /* ===== Includes ===== */
+#include <Arduino.h>
 #include "adrian_single_wire.hpp"
-
 
 namespace adrian
 {
@@ -49,33 +47,65 @@ namespace adrian
         /** Release the interface (does nothing). */
         virtual void Release() {}
 
-        /** Set the frequency in Hertz */
+        /** Set the frequency in Hertz. */
         virtual void SetFrequency(const uint32_t frequency)
         {
             m_frequency = frequency;
         }
 
-        /** Set the bit order (see BitOrder) */
+        /** Set the bit order (see BitOrder). */
         virtual void SetBitOrder(const BitOrder bit_order)
         {
             m_bit_order = bit_order;
         }
 
-        /** Perform a single half-duplex transfer */
-        virtual void Transfer(
-            const uint8_t *tx_buf,
-            const uint8_t num_bytes)
+        /** Write bytes over the wire using the Serial interface. */
+        virtual uint8_t Write(
+            const uint8_t tx_buffer[],
+            const uint8_t buffer_size)
         {
+            uint8_t single_wire_buffer[buffer_size * 4];
+
+            // Block the line for writing.
+            Serial.begin(m_frequency * 4);
+
+
+
+            // Unblock the line to allow for reading.
+            Serial.end();
+        }
+
+        /** Read bytes over the wire using the Serial interface. */
+        virtual uint8_t ReadBlocking(
+            uint8_t rx_buffer[],
+            const uint8_t buffer_size)
+        {
+            // Spin while waiting for input.
+            while (!Serial.available());
+
+            // Read as if it were serial data.
+            uint8_t serial_rx_buffer[4 * buffer_size];
+            const uint8_t bytes_read = Serial.readBytes(serial_rx_buffer, 4 * buffer_size);
+
+            // Translate from Serial bytes to data bytes.
             // TODO
+
+            return 0;
         }
 
     private:
         uint32_t m_data_pin;    //< Pin number of data pin
         uint32_t m_frequency;   //< Data transfer rate in Hertz
         BitOrder m_bit_order;   //< Data transfer bit order
+
+        // Bit transmission definitions.
+        static const uint8_t ZERO_ZERO = 0x88; // 0001 0001
+        static const uint8_t ZERO_ONE  = 0xE8; // 0001 0111
+        static const uint8_t ONE_ZERO  = 0x8E; // 0111 0001
+        static const uint8_t ONE_ONE   = 0xEE; // 0111 0111
+        static const uint8_t STOP_BIT  = 0xFC; // 0011 1111
     };
 
 }   // end namespace adrian
-
 
 #endif  // ADRIAN_SINGLE_WIRE_ARDUINO_HPP_
