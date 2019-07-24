@@ -10,7 +10,7 @@
 
 /* ===== Includes ===== */
 #include <cstring>
-#include "n64/adrian_single_wire.hpp"
+#include "adrian_single_wire.hpp"
 
 namespace adrian {
 

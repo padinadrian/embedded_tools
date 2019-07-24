@@ -113,9 +113,18 @@ namespace adrian
         }
 
     private:
-        uint32_t m_data_pin;    //< Pin number of data pin
-        uint32_t m_frequency;   //< Data transfer rate in Hertz
-        BitOrder m_bit_order;   //< Data transfer bit order
+
+        /* ===== Private Functions ===== */
+
+        /**
+         * 
+         */
+        void FallingEdgeReadHandler()
+        {
+            
+        }
+
+        /* ===== Private Variables ===== */
 
         // Bit transmission definitions.
         static const uint8_t ZERO_ZERO = 0x88; // 0001 0001
@@ -123,6 +132,10 @@ namespace adrian
         static const uint8_t ONE_ZERO  = 0x8E; // 0111 0001
         static const uint8_t ONE_ONE   = 0xEE; // 0111 0111
         static const uint8_t STOP_BIT  = 0xFC; // 0011 1111
+
+        uint32_t m_data_pin;    //< Pin number of data pin
+        uint32_t m_frequency;   //< Data transfer rate in Hertz
+        BitOrder m_bit_order;   //< Data transfer bit order
     };
 
 }   // end namespace adrian

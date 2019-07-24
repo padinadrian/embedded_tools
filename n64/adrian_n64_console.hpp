@@ -10,7 +10,7 @@
 
 /* ===== Includes ===== */
 #include <cstring>
-#include "n64/adrian_n64_controller.hpp"
+#include "adrian_n64_controller.hpp"
 
 namespace adrian {
 
@@ -68,14 +68,19 @@ namespace adrian {
 
     private:
 
+        /* ===== Private Functions ===== */
+
         /**
          * Send a series of bytes to the console.
          */
         void TransmitToConsole(const uint8_t tx_buffer[], const uint8_t num_bytes)
         {
             // TODO: This isn't going to work either...
-            Serial.write(tx_buffer, num_bytes);
+            m_single_wire_ptr->Write(tx_buffer, num_bytes);
         }
+
+        /* ===== Private Variables ===== */
+        adrian::SingleWire* m_single_wire_ptr;  //< Pointer to single-wire interface.
     };
 
 }   // end namespace adrian
