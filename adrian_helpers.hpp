@@ -32,22 +32,32 @@ namespace adrian
 
     /* Bit Manipulation */
 
-    // Return 1 if the bit is set, 0 otherwise
-    inline uint8_t BITGET(const uint8_t byte, const uint8_t bitnum)
+    /** Return 1 if the bit is set, 0 otherwise. */
+    template <typename T>
+    inline T BitGet(const T number, const uint8_t bitnum)
     {
-        return (byte & (1 << bitnum)) >> bitnum;
+        return (number & (1 << bitnum)) >> bitnum;
     }
 
-    // Set a particular bit within the byte
-    inline uint8_t BITSET(uint8_t& byte, const uint8_t bitnum)
+    /** Set a particular bit within the number. */
+    template <typename T>
+    inline T BitSet(const T number, const uint8_t bitnum)
     {
-        return (byte |= (1 << bitnum));
+        return (number | (1 << bitnum));
     }
 
-    // Return true if the bit is set, false otherwise
-    inline bool ISBITQ(const uint8_t byte, const uint8_t bitnum)
+    /** Set a particular bit within the number. */
+    template <typename T>
+    inline T BitClear(const T number, const uint8_t bitnum)
     {
-        return static_cast<bool>(byte & (1 << bitnum));
+        return (number & ~(1 << bitnum));
+    }
+
+    /** Return true if the bit is set, false otherwise. */
+    template <typename T>
+    inline bool IsBitQ(const T number, const uint8_t bitnum)
+    {
+        return static_cast<bool>(number & (1 << bitnum));
     }
 
 }   // end namespace adrian
