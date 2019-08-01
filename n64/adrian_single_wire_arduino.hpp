@@ -12,8 +12,42 @@
 #include <Arduino.h>
 #include "adrian_single_wire.hpp"
 
+
 namespace adrian
 {
+
+    /* ===== Helper Macros ===== */
+
+    /** Write a zero bit to pin 2 */
+    inline void zero_bit()
+    {
+        volatile uint8_t i = 0;
+        PORTD &= 0xFB;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
+        PORTD |= 0x04;
+        i = 1;
+    }
+
+    /** Write a one bit to pin 2 */
+    inline void one_bit()
+    {
+        volatile uint8_t i = 0;
+        PORTD &= 0xFB;
+        i = 1;
+        PORTD |= 0x04;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
+    }
+
+    /** Write a stop bit to pin 2 */
+    inline void stop_bit()
+    {
+        volatile uint8_t i = 0;
+        PORTD &= 0xFB;
+        i = 1; i = 2; i = 3;
+        PORTD |= 0x04;
+        i = 1; i = 2; i = 3;
+    }
+
     /**
      * SingleWire implementation for Arduino.
      */
@@ -65,15 +99,16 @@ namespace adrian
             const uint8_t tx_buffer[],
             const uint8_t buffer_size)
         {
-            uint8_t single_wire_buffer[buffer_size * 4];
-
-            // Block the line for writing.
-            Serial.begin(m_frequency * 4);
-
-
-
-            // Unblock the line to allow for reading.
-            Serial.end();
+            pinMode(2, OUTPUT);
+            for (uint8_t bytenum = 0; bytenum < buffer_size; ++bytenum)
+            {
+                for (uint8_t mask = 1; mask > 0; mask <<= 0)
+                {
+                    if (tx_buffer[bytenum] & mask) { one_bit(); }
+                    else { zero_bit(); }
+                }
+            }
+            stop_bit();
         }
 
         /** Read bytes over the wire using the Serial interface. */
@@ -81,58 +116,25 @@ namespace adrian
             uint8_t rx_buffer[],
             const uint8_t buffer_size)
         {
-            // Spin while waiting for input.
-            while (!Serial.available());
+            // Spin waiting for input.
+            pinMode(2, INPUT_PULLUP);
+            while (PIND & 4);
 
-            // Read as if it were serial data.
-            uint8_t serial_rx_buffer[4 * buffer_size];
-            const uint8_t bytes_read = Serial.readBytes(serial_rx_buffer, 4 * buffer_size);
-
-            // Translate from Serial bytes to data bytes.
-            // TODO
-
+            volatile uint8_t counter = 0;
+            for (uint8_t bytenum = 0; bytenum < buffer_size; ++bytenum)
+            {
+                for (uint32_t mask = 1; mask > 0; mask <<= 1)
+                {
+                    counter = 1;    // killing time
+                    rx_buffer[bytenum] |= ((PIND & 4) ? mask : 0);
+                }
+            }
             return 0;
         }
 
-        /** Read bytes over the wire using the Serial interface. */
-        // virtual uint8_t ReadBlocking(
-        //     uint8_t rx_buffer[],
-        //     const uint8_t buffer_size)
-        // {
-        //     // Spin while waiting for input.
-        //     while (!Serial.available());
-
-        //     // Read as if it were serial data.
-        //     uint8_t serial_rx_buffer[4 * buffer_size];
-        //     const uint8_t bytes_read = Serial.readBytes(serial_rx_buffer, 4 * buffer_size);
-
-        //     // Translate from Serial bytes to data bytes.
-        //     // TODO
-
-        //     return 0;
-        // }
-
     private:
 
-        /* ===== Private Functions ===== */
-
-        /**
-         *
-         */
-        void FallingEdgeReadHandler()
-        {
-
-        }
-
         /* ===== Private Variables ===== */
-
-        // Bit transmission definitions.
-        static const uint8_t ZERO_ZERO = 0x88; // 0001 0001
-        static const uint8_t ZERO_ONE  = 0xE8; // 0001 0111
-        static const uint8_t ONE_ZERO  = 0x8E; // 0111 0001
-        static const uint8_t ONE_ONE   = 0xEE; // 0111 0111
-        static const uint8_t STOP_BIT  = 0xFC; // 0011 1111
-
         uint32_t m_data_pin;    //< Pin number of data pin
         uint32_t m_frequency;   //< Data transfer rate in Hertz
         BitOrder m_bit_order;   //< Data transfer bit order
