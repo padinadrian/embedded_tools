@@ -2,6 +2,7 @@
 
 # List unit test source files
 add_executable(${PROJECT_NAME}_tests
+    debounced_button_test_1.cpp
     adrian_helpers_test_1.cpp
 )
 
@@ -10,4 +11,11 @@ target_link_libraries(${PROJECT_NAME}_tests
     gtest
     gtest_main
     pthread
+)
+
+# Add a commmand to build and run tests
+add_custom_target(run_tests
+    COMMAND make ${PROJECT_NAME}_tests
+    COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}_tests
+    DEPENDS ${PROJECT_NAME}_tests
 )
