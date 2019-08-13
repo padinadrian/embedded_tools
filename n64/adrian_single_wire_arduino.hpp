@@ -24,8 +24,10 @@ namespace adrian
         volatile uint8_t i = 0;
         PORTD &= 0xFB;
         i = 1; i = 2; i = 3; i = 4; i = 5;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
         PORTD |= 0x04;
-        i = 1;
     }
 
     /** Write a one bit to pin 2 */
@@ -33,8 +35,10 @@ namespace adrian
     {
         volatile uint8_t i = 0;
         PORTD &= 0xFB;
-        i = 1;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
         PORTD |= 0x04;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
+        i = 1; i = 2; i = 3; i = 4; i = 5;
         i = 1; i = 2; i = 3; i = 4; i = 5;
     }
 
@@ -44,7 +48,9 @@ namespace adrian
         volatile uint8_t i = 0;
         PORTD &= 0xFB;
         i = 1; i = 2; i = 3;
+        i = 1; i = 2; i = 3;
         PORTD |= 0x04;
+        i = 1; i = 2; i = 3;
         i = 1; i = 2; i = 3;
     }
 

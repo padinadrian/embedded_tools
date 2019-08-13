@@ -116,8 +116,8 @@ namespace adrian {
             const uint8_t buffer_size = 4U;
             uint8_t rx_buffer[buffer_size];
             const uint8_t bytes_read = WaitForResponse(rx_buffer, buffer_size);
-            
-            const bool valid_data = (bytes_read == buffer_size);
+
+            const bool valid_data = (bytes_read >= buffer_size);
             if (valid_data)
             {
                 memcpy(&n64_buttons, rx_buffer, buffer_size);
