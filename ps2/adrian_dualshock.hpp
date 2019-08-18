@@ -14,8 +14,6 @@
 
 namespace adrian
 {
-    using adrian::SPI;
-
     /** Represents a DualShock controller. */
     class DualShock
     {

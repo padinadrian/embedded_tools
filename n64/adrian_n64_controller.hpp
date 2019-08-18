@@ -9,7 +9,6 @@
 #define ADRIAN_N64_CONTROLLER_HPP_
 
 /* ===== Includes ===== */
-#include <cstring>
 #include "adrian_single_wire.hpp"
 
 namespace adrian {
@@ -45,9 +44,9 @@ namespace adrian {
             uint8_t c_left:1;
             uint8_t c_right:1;
             // Byte 3: joystick x value (range -0x50 to 0x50)
-            uint8_t joy_x;
+            int8_t joy_x;
             // Byte 3: joystick x value (range -0x50 to 0x50)
-            uint8_t joy_y;
+            int8_t joy_y;
         };
 
         /**

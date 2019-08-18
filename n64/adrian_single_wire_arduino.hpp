@@ -49,9 +49,9 @@ namespace adrian
         PORTD &= 0xFB;
         i = 1; i = 2; i = 3;
         i = 1; i = 2; i = 3;
-        PORTD |= 0x04;
-        i = 1; i = 2; i = 3;
-        i = 1; i = 2; i = 3;
+
+        DDRD &= 0xFB;       // Configure as input
+        PORTD |= 0x04;      // Set to high (enable pull-up)
     }
 
     /**
