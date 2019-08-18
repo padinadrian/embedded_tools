@@ -39,10 +39,7 @@ namespace adrian
         virtual ~SPI() {};
 
         /** Initialize the SPI interface (platform dependent) */
-        virtual void Initialize(
-            uint32_t clk_pin,
-            uint32_t mosi_pin,
-            uint32_t miso_pin) = 0;
+        virtual void Initialize() = 0;
 
         /** Release the SPI interface (platform dependent) */
         virtual void Release() = 0;

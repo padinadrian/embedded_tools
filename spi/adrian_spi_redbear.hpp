@@ -17,37 +17,40 @@ namespace adrian
     /**
      * SPI implmentation for RedBear Labs BLE Nano.
      */
-    class RedbearSPI : public adrian::SPI
+    class RedBearSPI : public adrian::SPI
     {
     public:
         /**
          * Constructor: pass either NRF_SPI0 or NRF_SPI1.
          * See "mbed.h" for more details.
          */
-        RedbearSPI(NRF_SPI_Type *_spi) : spi_impl(_spi)
+        RedBearSPI(
+                NRF_SPI_Type *_spi,
+                uint32_t clk_pin,
+                uint32_t mosi_pin,
+                uint32_t miso_pin
+            ) :
+            m_redbear_spi(_spi)
         {
-            // Leave empty
+            m_redbear_spi.begin(clock_pin, mosi_pin, miso_pin);
         }
 
         /** Configure SPI interface with CLK, MOSI, and MISO pins. */
-        virtual void Initialize(
-            uint32_t clk_pin,
-            uint32_t mosi_pin,
-            uint32_t miso_pin)
+        virtual void Initialize()
         {
-            readbear_spi.begin(clock_pin, mosi_pin, miso_pin);
+            // Nothing
         }
 
         /** Release the SPI interface */
         virtual void Release()
         {
-            readbear_spi.endTransfer();
+            m_redbear_spi.endTransfer();
         }
 
         /** Set the transfer mode (see SPI::TransferMode) */
         virtual void SetMode(const SPI::TransferMode mode)
         {
-            readbear_spi.setSPIMode(static_cast<uint8_t>(mode));
+            m_redbear_spi.setSPIMode(static_cast<uint8_t>(mode));
         }
 
         /**
@@ -109,9 +112,18 @@ namespace adrian
             }
         }
 
+        /** Perform a single full-duplex SPI transfer */
+        virtual void Transfer(
+            const uint8_t *tx_buf,
+            uint8_t *rx_buf,
+            const uint8_t num_bytes)
+        {
+            // TODO (already done somewhere?)
+        }
+
     private:
         // RedBear SPI interface
-        SPIClass redbear_spi;
+        SPIClass m_redbear_spi;
     };
 
 }   // end namespace adrian
