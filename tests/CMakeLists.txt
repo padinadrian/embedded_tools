@@ -2,7 +2,7 @@
 
 # List unit test source files
 add_executable(${PROJECT_NAME}_tests
-    debounced_button_test_1.cpp
+    adrian_debounced_button_test_1.cpp
     adrian_helpers_test_1.cpp
 )
 

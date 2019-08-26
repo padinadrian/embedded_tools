@@ -1,5 +1,5 @@
 /**
- * File:    debounced_button_test_1.cpp
+ * File:    adrian_debounced_button_test_1.cpp
  * Author:  padin.adrian@gmail.com
  *
  * Copyright 2019
@@ -7,7 +7,7 @@
 
 /* ===== Includes ===== */
 #include <gtest/gtest.h>
-#include "../debounced_button.hpp"
+#include "../adrian_debounced_button.hpp"
 using namespace adrian;
 
 /* ===== Tests ===== */

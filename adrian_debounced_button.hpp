@@ -1,12 +1,12 @@
 /**
- * File:    debounced_button.hpp
+ * File:    adrian_debounced_button.hpp
  * Author:  padin.adrian@gmail.com
  *
  * Copyright 2019
  */
 
-#ifndef DEBOUNCED_BUTTON_HPP_
-#define DEBOUNCED_BUTTON_HPP_
+#ifndef ADRIAN_DEBOUNCED_BUTTON_HPP_
+#define ADRIAN_DEBOUNCED_BUTTON_HPP_
 
 /* ===== Includes ===== */
 #include "adrian_helpers.hpp"
@@ -68,4 +68,4 @@ namespace adrian
 
 }   // end namespace adrian
 
-#endif  // DEBOUNCED_BUTTON_HPP_
+#endif  // ADRIAN_DEBOUNCED_BUTTON_HPP_

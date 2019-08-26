@@ -70,7 +70,7 @@ namespace adrian {
             m_single_wire_ptr(single_wire_ptr)
         {
             m_single_wire_ptr->SetFrequency(MHz);
-            m_single_wire_ptr->SetBitOrder(BIT_ORDER_LSB_FIRST);
+            m_single_wire_ptr->SetBitOrder(BIT_ORDER_MSB_FIRST);
         }
 
         /**

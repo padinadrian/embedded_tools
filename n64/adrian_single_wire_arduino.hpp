@@ -12,7 +12,6 @@
 #include <Arduino.h>
 #include "adrian_single_wire.hpp"
 
-
 namespace adrian
 {
 
@@ -80,8 +79,8 @@ namespace adrian
          */
         virtual void Initialize(const uint32_t data_pin)
         {
-            m_data_pin = data_pin;
-            pinMode(m_data_pin, OUTPUT);
+            // m_data_pin = data_pin;
+            // pinMode(m_data_pin, OUTPUT);
         }
 
         /** Release the interface (does nothing). */

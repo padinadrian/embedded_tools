@@ -72,3 +72,13 @@ TEST(AdrianHelpers, BitClear)
     EXPECT_EQ(BitClear<uint32_t>(0xFFFFFFFF, 14), 0xFFFFBFFF);
     EXPECT_EQ(BitClear<uint32_t>(0xFFFFFFFF, 15), 0xFFFF7FFF);
 }
+
+TEST(AdrianHelpers, ReverseByte1)
+{
+    EXPECT_EQ(ReverseByte(0x55), 0xAA);
+    EXPECT_EQ(ReverseByte(0b01101010), 0b01010110);
+    EXPECT_EQ(ReverseByte(0b10010101), 0b10101001);
+    EXPECT_EQ(ReverseByte(0b00111000), 0b00011100);
+    EXPECT_EQ(ReverseByte(0b11110000), 0b00001111);
+    EXPECT_EQ(ReverseByte(0b00101100), 0b00110100);
+}

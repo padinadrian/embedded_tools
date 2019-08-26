@@ -60,6 +60,18 @@ namespace adrian
         return static_cast<bool>(number & (1 << bitnum));
     }
 
+    /** Reverse the bits in a byte. */
+    inline uint8_t ReverseByte(uint8_t b)
+    {
+        static unsigned char reverse_lookup[16] = {
+            0x0, 0x8, 0x4, 0xc, 0x2, 0xa, 0x6, 0xe,
+            0x1, 0x9, 0x5, 0xd, 0x3, 0xb, 0x7, 0xf,
+        };
+
+        // Reverse the top and bottom nibble then swap them.
+        return (reverse_lookup[b & 0xf] << 4) | reverse_lookup[b >> 4];
+    }
+
 }   // end namespace adrian
 
 #endif  // ADRIAN_HELPERS_HPP_
