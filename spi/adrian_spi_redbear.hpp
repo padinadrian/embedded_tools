@@ -10,7 +10,7 @@
 
 /* ===== Includes ===== */
 #include "spi/adrian_spi.hpp"
-#include "spi_master_redbear.hpp"
+#include "ext/spi_master_redbear.hpp"
 
 namespace adrian
 {

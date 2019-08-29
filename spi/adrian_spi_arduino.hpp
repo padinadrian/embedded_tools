@@ -9,8 +9,7 @@
 #define ADRIAN_SPI_ARDUINO_HPP_
 
 /* ===== Includes ===== */
-#include <SPI.h>
-#include "SoftSPI.h"
+#include "ext/SoftSPI.h"
 #include "adrian_spi.hpp"
 
 namespace adrian
