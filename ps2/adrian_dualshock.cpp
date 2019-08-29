@@ -54,8 +54,8 @@ namespace adrian
     {
         // Set up SPI configuration
         m_spi_ptr->SetMode(SPI::TRANSFER_MODE_3);
-        m_spi_ptr->SetBitOrder(SPI::BIT_ORDER_MSB_FIRST);
-        m_spi_ptr->SetFrequency(250 * SPI::KHz);
+        m_spi_ptr->SetBitOrder(adrian::BIT_ORDER_MSB_FIRST);
+        m_spi_ptr->SetFrequency(250 * adrian::KHz);
     }
 
     // Attempt to establish communication with the controller.
@@ -177,24 +177,24 @@ namespace adrian
         button_state_out.digital_valid = true;
 
         const uint8_t fourth = digital_bytes[3];
-        button_state_out.select   = !ISBITQ(0, fourth);
-        button_state_out.left3    = !ISBITQ(1, fourth);
-        button_state_out.right3   = !ISBITQ(2, fourth);
-        button_state_out.start    = !ISBITQ(3, fourth);
-        button_state_out.d_up     = !ISBITQ(4, fourth);
-        button_state_out.d_right  = !ISBITQ(5, fourth);
-        button_state_out.d_down   = !ISBITQ(6, fourth);
-        button_state_out.d_left   = !ISBITQ(7, fourth);
+        button_state_out.select   = !IsBitQ<uint8_t>(fourth, 0);
+        button_state_out.left3    = !IsBitQ<uint8_t>(fourth, 1);
+        button_state_out.right3   = !IsBitQ<uint8_t>(fourth, 2);
+        button_state_out.start    = !IsBitQ<uint8_t>(fourth, 3);
+        button_state_out.d_up     = !IsBitQ<uint8_t>(fourth, 4);
+        button_state_out.d_right  = !IsBitQ<uint8_t>(fourth, 5);
+        button_state_out.d_down   = !IsBitQ<uint8_t>(fourth, 6);
+        button_state_out.d_left   = !IsBitQ<uint8_t>(fourth, 7);
 
         const uint8_t fifth = digital_bytes[4];
-        button_state_out.left2    = !ISBITQ(0, fifth);
-        button_state_out.right2   = !ISBITQ(1, fifth);
-        button_state_out.left1    = !ISBITQ(2, fifth);
-        button_state_out.right1   = !ISBITQ(3, fifth);
-        button_state_out.triangle = !ISBITQ(4, fifth);
-        button_state_out.circle   = !ISBITQ(5, fifth);
-        button_state_out.cross    = !ISBITQ(6, fifth);
-        button_state_out.square   = !ISBITQ(7, fifth);
+        button_state_out.left2    = !IsBitQ<uint8_t>(fifth, 0);
+        button_state_out.right2   = !IsBitQ<uint8_t>(fifth, 1);
+        button_state_out.left1    = !IsBitQ<uint8_t>(fifth, 2);
+        button_state_out.right1   = !IsBitQ<uint8_t>(fifth, 3);
+        button_state_out.triangle = !IsBitQ<uint8_t>(fifth, 4);
+        button_state_out.circle   = !IsBitQ<uint8_t>(fifth, 5);
+        button_state_out.cross    = !IsBitQ<uint8_t>(fifth, 6);
+        button_state_out.square   = !IsBitQ<uint8_t>(fifth, 7);
     }
 
     // Parse the analog buttons from the response.
