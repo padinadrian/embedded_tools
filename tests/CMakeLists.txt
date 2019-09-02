@@ -2,14 +2,21 @@
 
 # List unit test source files
 add_executable(${PROJECT_NAME}_tests
+    # Tests
     adrian_debounced_button_test_1.cpp
     adrian_helpers_test_1.cpp
+    adrian_dualshock_test_1.cpp
+
+    # Sources
+    ../ps2/adrian_dualshock.cpp
 )
 
 # Add dependent libraries
 target_link_libraries(${PROJECT_NAME}_tests
     gtest
     gtest_main
+    gmock
+    gmock_main
     pthread
 )
 

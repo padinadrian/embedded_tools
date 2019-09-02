@@ -26,7 +26,7 @@ namespace adrian
         MOCK_METHOD(void, SetFrequency, (const uint32_t frequency), (override));
         MOCK_METHOD(void, SetBitOrder, (const BitOrder order), (override));
         MOCK_METHOD(void, Transfer, (const uint8_t *tx_buf, uint8_t *rx_buf, const uint8_t num_bytes), (override));
-    }
+    };
 }
 
 #endif  // ADRIAN_SPI_MOCK_HPP_

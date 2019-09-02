@@ -10,7 +10,7 @@
 
 /* ===== Includes ===== */
 #include "adrian_helpers.hpp"
-#include "adrian_spi.hpp"
+#include "spi/adrian_spi.hpp"
 
 namespace adrian
 {

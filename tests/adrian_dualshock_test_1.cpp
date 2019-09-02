@@ -8,7 +8,11 @@
 /* ===== Includes ===== */
 #include <gtest/gtest.h>
 #include "spi/adrian_spi.hpp"
+#include "ps2/adrian_dualshock.hpp"
 #include "mocks/adrian_spi_mock.hpp"
+using adrian::MockSPI;
+using adrian::SPI;
+using adrian::DualShock;
 
 /* ===== Tests ===== */
 
@@ -27,9 +31,26 @@ TEST(AdrianDualShock, Constructor)
 TEST(AdrianDualShock, PollNoRumble)
 {
     MockSPI spi;
+    EXPECT_CALL(spi, SetMode(SPI::TRANSFER_MODE_3)).Times(1);
+    EXPECT_CALL(spi, SetBitOrder(adrian::BIT_ORDER_MSB_FIRST)).Times(1);
+    EXPECT_CALL(spi, SetFrequency(250 * adrian::KHz)).Times(1);
     EXPECT_CALL(spi, Transfer).Times(1);
 
     DualShock controller(&spi);
     DualShock::ButtonState current_button_states;
     controller.Poll(current_button_states);
+}
+
+// Configuring analog
+TEST(AdrianDualShock, EnableAnalog)
+{
+    MockSPI spi;
+    EXPECT_CALL(spi, SetMode(SPI::TRANSFER_MODE_3)).Times(1);
+    EXPECT_CALL(spi, SetBitOrder(adrian::BIT_ORDER_MSB_FIRST)).Times(1);
+    EXPECT_CALL(spi, SetFrequency(250 * adrian::KHz)).Times(1);
+    EXPECT_CALL(spi, Transfer).Times(5);
+
+    DualShock controller(&spi);
+    DualShock::ButtonState current_button_states;
+    controller.EnableAnalog();
 }

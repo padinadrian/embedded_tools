@@ -16,10 +16,10 @@ set(${PROJECT_NAME}_VERSION_FULL
     "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_BUGFIX}.${GIT_SHA1}")
 
 # Create version number file
-file(WRITE "${CMAKE_BINARY_DIR}/version" "${${PROJECT_NAME}_VERSION_FULL}\n")
+file(WRITE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_version.h" "${${PROJECT_NAME}_VERSION_FULL}\n")
 
 # Universal settings
-include_directories("${CMAKE_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
