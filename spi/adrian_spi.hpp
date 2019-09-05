@@ -55,8 +55,8 @@ namespace adrian
 
         /** Perform a single full-duplex SPI transfer */
         virtual void Transfer(
-            const uint8_t *tx_buf,
-            uint8_t *rx_buf,
+            const uint8_t tx_buf[],
+            uint8_t rx_buf[],
             const uint8_t num_bytes) = 0;
     };
 

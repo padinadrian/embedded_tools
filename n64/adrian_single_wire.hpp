@@ -49,8 +49,7 @@ namespace adrian
          */
         virtual uint8_t Write(
             const uint8_t tx_buffer[],
-            const uint8_t buffer_size
-        ) = 0;
+            const uint8_t buffer_size) = 0;
 
         /**
          * Perform a blocking half-duplex read.
@@ -59,8 +58,7 @@ namespace adrian
          */
         virtual uint8_t ReadBlocking(
             uint8_t rx_buffer[],
-            const uint8_t buffer_size
-        ) = 0;
+            const uint8_t buffer_size) = 0;
 
         /**
          * First perform a half-duplex write.
@@ -74,8 +72,7 @@ namespace adrian
             const uint8_t tx_buffer[],
             const uint8_t tx_buffer_size,
             uint8_t rx_buffer[],
-            const uint8_t rx_buffer_size
-        ) = 0;
+            const uint8_t rx_buffer_size) = 0;
     };
 
 }   // end namespace adrian

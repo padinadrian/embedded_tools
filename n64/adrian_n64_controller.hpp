@@ -36,7 +36,8 @@ namespace adrian {
             uint8_t d_left:1;
             uint8_t d_right:1;
             // Byte 2: second set of buttons
-            uint8_t unused:2;
+            uint8_t valid:1;
+            uint8_t reset:1;
             uint8_t l:1;
             uint8_t r:1;
             uint8_t c_up:1;
@@ -87,7 +88,7 @@ namespace adrian {
          */
         bool RequestIdentify()
         {
-            SendCommandToController(IDENTIFY);
+            this->SendCommandToController(Command::IDENTIFY);
             // TODO: handle response
             return true;
         }
@@ -98,7 +99,7 @@ namespace adrian {
          */
         bool RequestRecalibrate()
         {
-            SendCommandToController(RECALIBRATE);
+            this->SendCommandToController(Command::RECALIBRATE);
             // TODO: handle response
             return true;
         }
@@ -109,19 +110,17 @@ namespace adrian {
          */
         bool RequestButtonData(ButtonState& n64_buttons)
         {
-            SendCommandToController(RECALIBRATE);
+            // Send the request and handle the response.
+            const uint8_t rx_buffer_size = sizeof(n64_buttons);
+            uint8_t rx_buffer[rx_buffer_size];
+            this->SendCommandToController(Command::DATA);
+            (void)this->WaitForResponse(rx_buffer, rx_buffer_size);
 
-            // Handle the response.
-            const uint8_t buffer_size = 4U;
-            uint8_t rx_buffer[buffer_size];
-            const uint8_t bytes_read = WaitForResponse(rx_buffer, buffer_size);
+            memcpy(&n64_buttons, rx_buffer, sizeof(n64_buttons));
+            n64_buttons.joy_x = ReverseByte(n64_buttons.joy_x);
+            n64_buttons.joy_y = ReverseByte(n64_buttons.joy_y);
 
-            const bool valid_data = (bytes_read >= buffer_size);
-            if (valid_data)
-            {
-                memcpy(&n64_buttons, rx_buffer, buffer_size);
-            }
-            return valid_data;
+            return !static_cast<bool>(n64_buttons.valid);
         }
 
     private:
