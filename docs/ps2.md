@@ -2,7 +2,13 @@
 
 This document will detail the interface used by the
 PlayStation 2 to communicate with the DualShock 2
-controllers.
+controllers, as well as examples for using the
+adrian PS2 software interface.
+
+## Table of Contents
+1. [Physical Layer](#physical-layer)
+2. [Data Layer](#data-layer)
+3. [Software](#software)
 
 ## Physical Layer
 
@@ -148,7 +154,142 @@ means stronger vibration.
 
 #### Command Type
 
+## Software
 
+The basic functionality for using the DualShock controller
+in your embedded projects is wrapped in the adrian::DualShock
+class. This interface is designed to be easily extendable to
+any project - simply implement the SPI interface (or use an
+existing interface, such as adrian::ArduinoSPI) and you can
+connect to the controller and read the buttons and joysticks.
+
+Example of using the DualShock class:
+
+```c++
+main()
+{
+    // Initialization
+    ArduinoSPI spi_impl;
+    spi_impl.Initialize();
+
+    adrian::DualShock ps2_controller(&spi_impl);
+    adrian::DualShock::ButtonState buttons;
+
+    digitalWrite(SELECT_PIN, LOW);      // Lower select line
+    ps2_controller.Poll(buttons);       // Get button data
+    digitalWrite(SELECT_PIN, HIGH);     // Raise select line
+}
+```
+
+### DualShock Class
+
+Here is a simplified version of the DualShock class:
+
+```c++
+/** Represents a DualShock controller. */
+class DualShock
+{
+public:
+    DualShock(SPI* const spi_interface);
+
+    // Connect and disconnect the controller.
+    bool Connect();
+    bool Disconnect();
+    bool IsConnected() const;
+
+    // Ask the controller for button info and
+    // send rumble commands.
+    void Poll(ButtonState& current_button_states);
+    void Poll(uint8_t left_rumble,
+              uint8_t right_rumble,
+              ButtonState& current_button_states);
+
+    // Turn on/off analog mode (required to get joystick data)
+    bool EnableAnalog();
+    bool DisableAnalog();
+};
+```
+
+#### Function Description
+
+Constructor
+* `DualShock(spi_interface)` - Create a DualShock object and
+  pass in a pointer to a valid SPI interface.
+
+Connecting
+* `bool Connect()` - Connect to the controller.
+  Returns true if connection succeeded, otherwise false.
+* `bool Disconnect()` - Disconnect from the controller.
+* `bool IsConnected()` - Check if the controller is properly connected.
+
+Polling
+* `void Poll(buttons)` - Grab the input data from the controller
+  and copy it into the `buttons` object.
+* `void Poll(left_rumble, right_rumble, buttons)` - Grab the input
+  data from the controller, and send the controller a command
+  to activate the rumble motors.
+
+Configuration
+* `bool EnableAnalog()` - Turn on analog mode (required for joysticks).
+* `bool DisableAnalog()` - Turn off analog mode.
+
+### Example
+
+Below is a complete example of using the DualShock class with
+an Arduino Uno. In this example, pressing X on the controller
+will cause an external LED to light up.
+
+```c++
+// mysketch.ino
+
+#include "embedded_tools/spi/adrian_spi_arduino.hpp"
+#include "embedded_tools/ps2/adrian_dualshock.hpp"
+
+// Globals
+
+static adrian::ArduinoSPI spi;
+static adrian::DualShock ps2_controller(&spi);
+static adrian::DualShock::ButtonState buttons;
+
+// Need to define a slave select pin
+const int SSEL_PIN = 10;
+
+// External LED (since built-in is 13, already used for SCLK)
+const int LED_PIN = 9;
+
+setup()
+{
+    spi.Initialize();
+    pinMode(SSEL_PIN, OUTPUT);
+    pinMode(LED_PIN, OUTPUT);
+
+    digitalWrite(SSEL_PIN, HIGH);
+    digitalWrite(LED_PIN, LOW);
+}
+
+loop()
+{
+    // Try to connect to controller
+    if (!ps2_controller.IsConnected())
+    {
+        digitalWrite(SSEL_PIN, LOW);
+        while (!ps2_controller.Connect()) { delay(1000); }
+        digitalWrite(SSEL_PIN, HIGH);
+    }
+
+    // Poll the controller for the button status.
+    digitalWrite(SSEL_PIN, LOW);
+    ps2_controller.Poll(buttons);
+    digitalWrite(SSEL_PIN, HIGH);
+
+    digitalWrite(
+        LED_PIN,
+        (buttons.digital_valid && buttons.cross) ? HIGH : LOW
+    );
+
+    delay(100);
+}
+```
 
 ## Sources
 

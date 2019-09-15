@@ -21,6 +21,73 @@ namespace adrian
         /* ===== Classes ===== */
 
         /** Holds the state of all buttons, including analog and digital values. */
+        struct ButtonState;
+
+        /* ===== Functions ===== */
+
+        /**
+         * Constructor - configure SPI interface for DualShock settings.
+         * Assumes SPI interface is already initialized.
+         * @param[in] spi_interface - Pointer to SPI device.
+         */
+        DualShock(SPI* const spi_interface);
+
+        /** Attempt to establish communication with the controller. */
+        bool Connect();
+
+        /** Disconnect from the controller (actually does nothing). */
+        void Disconnect();
+
+        /** Check if controller is connected. */
+        bool IsConnected() const;
+
+        /**
+         * Just poll for the button states.
+         * @param[out] current_button_states - Digital and analog button values.
+         */
+        void Poll(ButtonState& current_button_states);
+
+        /**
+         * Poll for the button states and activate the controller rumble.
+         * @param[in] left_rumble - Rumble value for left-side motor (between 0 and 256).
+         * @param[in] right_rumble - Rumble value for right-side motor (between 0 and 256).
+         * @param[out] current_button_states - Digital and analog button values.
+         */
+        void Poll(const uint8_t left_rumble,
+                  const uint8_t right_rumble,
+                  ButtonState& current_button_states);
+
+        /**
+         * Enter Analog Mode to enable reading pressure values.
+         * You must call this function in order to read pressure values!
+         */
+        bool EnableAnalog();
+
+        /**
+         * Enter Digital Mode to disable reading pressure values.
+         * The controller will be in digital mode at startup by default.
+         */
+        bool DisableAnalog();
+
+        /** Parse the digital buttons from the response */
+        static void ParseDigitalButtons(
+            const uint8_t* digital_bytes,
+            ButtonState& button_state_out);
+
+        /** Parse the analog buttons from the response */
+        static void ParseAnalogButtons(
+            const uint8_t* analog_bytes,
+            ButtonState& button_state_out);
+
+    private:
+        SPI* const m_spi_ptr;
+        bool m_is_connected;
+        bool m_analog_enabled;
+
+    public:
+        /* ===== Classes ===== */
+
+        /** Holds the state of all buttons, including analog and digital values. */
         struct ButtonState
         {
             /** Constructor */
@@ -72,67 +139,6 @@ namespace adrian
             uint8_t cross_pressure;
             uint8_t square_pressure;
         };
-
-        /* ===== Functions ===== */
-
-        /**
-         * Constructor - configure SPI interface for DualShock settings.
-         * Assumes SPI interface is already initialized.
-         * @param[in] spi_interface - Pointer to SPI device.
-         */
-        DualShock(SPI* const spi_interface);
-
-        /** Attempt to establish communication with the controller. */
-        bool Connect();
-
-        /** Disconnect from the controller (actually does nothing). */
-        bool Disconnect();
-
-        /** Check if controller is connected. */
-        bool IsConnected() const;
-
-        /**
-         * Just poll for the button states.
-         * @param[out] current_button_states - Digital and analog button values.
-         */
-        void Poll(ButtonState& current_button_states);
-
-        /**
-         * Poll for the button states and activate the controller rumble.
-         * @param[in] left_rumble - Rumble value for left-side motor (between 0 and 256).
-         * @param[in] right_rumble - Rumble value for right-side motor (between 0 and 256).
-         * @param[out] current_button_states - Digital and analog button values.
-         */
-        void Poll(uint8_t left_rumble,
-                  uint8_t right_rumble,
-                  ButtonState& current_button_states);
-
-        /**
-         * Enter Analog Mode to enable reading pressure values.
-         * You must call this function in order to read pressure values!
-         */
-        bool EnableAnalog();
-
-        /**
-         * Enter Digital Mode to disable reading pressure values.
-         * The controller will be in digital mode at startup by default.
-         */
-        bool DisableAnalog();
-
-        /** Parse the digital buttons from the response */
-        static void ParseDigitalButtons(
-            const uint8_t* digital_bytes,
-            ButtonState& button_state_out);
-
-        /** Parse the analog buttons from the response */
-        static void ParseAnalogButtons(
-            const uint8_t* analog_bytes,
-            ButtonState& button_state_out);
-
-    private:
-        SPI* const m_spi_ptr;
-        bool m_is_connected;
-        bool m_analog_enabled;
     };
 
 }   // end namespace ps2

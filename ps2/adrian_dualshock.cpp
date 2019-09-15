@@ -66,7 +66,7 @@ namespace adrian
     }
 
     // Disconnect from the controller (actually does nothing).
-    bool DualShock::Disconnect()
+    void DualShock::Disconnect()
     {
         m_is_connected = false;
     }
@@ -84,8 +84,8 @@ namespace adrian
     }
 
     // Poll for the button states and activate the controller rumble.
-    void DualShock::Poll(uint8_t left_rumble,
-                         uint8_t right_rumble,
+    void DualShock::Poll(const uint8_t left_rumble,
+                         const uint8_t right_rumble,
                          ButtonState& current_button_states)
     {
         // Set these to false for now.
