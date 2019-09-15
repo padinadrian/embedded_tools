@@ -9,8 +9,8 @@
 #define ADRIAN_DUALSHOCK_HPP_
 
 /* ===== Includes ===== */
-#include "adrian_helpers.hpp"
-#include "spi/adrian_spi.hpp"
+#include "../adrian_helpers.hpp"
+#include "../spi/adrian_spi.hpp"
 
 namespace adrian
 {

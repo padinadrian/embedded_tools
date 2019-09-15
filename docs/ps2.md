@@ -17,7 +17,7 @@ of inputs:
 
 Based on the configuration, the 12 main buttons can be
 either simple on/off buttons or fully pressure-sensitive
-analog inputs. Start, select, L3, and R3 (joystick buttons)
+analog inputs. Start, select, and L3/R3 (joystick buttons)
 are digital-only.
 
 The analog joysticks both sit on a two-axis grid and report
@@ -42,6 +42,10 @@ right on the male side:
 7. Blue - Clock
 8. White - Unused
 9. Green - Acknowledge
+
+#### Male Connector
+
+![alt text](ps2_connector.jpg "DualShock connector wires.")
 
 ### Data Wires
 
@@ -152,6 +156,5 @@ This data was collected over time from various sites, and I
 want to pay credit to those who have gone before me and did
 the hard work of reverse engineering the SPI protocols.
 
-1. Curious Inventor: Interfacing a PS2 (PlayStation 2) Controller
+1. Curious Inventor - Interfacing a PS2 (PlayStation 2) Controller:
    http://store.curiousinventor.com/PS2
-

@@ -9,7 +9,7 @@
 #define ADRIAN_SPI_HPP_
 
 /* ===== Includes ===== */
-#include "adrian_helpers.hpp"
+#include "../adrian_helpers.hpp"
 
 namespace adrian
 {

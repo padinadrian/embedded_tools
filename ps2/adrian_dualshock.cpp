@@ -61,8 +61,7 @@ namespace adrian
     // Attempt to establish communication with the controller.
     bool DualShock::Connect()
     {
-        m_is_connected = false;
-
+        m_is_connected = true;
         return m_is_connected;
     }
 
