@@ -149,16 +149,8 @@ namespace adrian
             volatile int i = 0;
 
             // USI is only capable of doing MSB_FIRST from hardware
-            if (bit_order == BIT_ORDER_MSB_FIRST)
-            {
-                USIDR = data;
-            }
             // We need to manually flip the bits for LSB_FIRST
-            else
-            {
-                USIDR = ReverseByte(data);
-            }
-
+            USIDR = (bit_order == BIT_ORDER_MSB_FIRST) ? data : ReverseByte(data);
             USISR = _BV(USIOIF);
 
             noInterrupts();
@@ -179,12 +171,8 @@ namespace adrian
             interrupts();
 
             // USI is only capable of doing MSB_FIRST from hardware
-            if (bit_order == BIT_ORDER_MSB_FIRST)
-            {
-                return USIDR;
-            }
             // We need to manually flip the bits for LSB_FIRST
-            return ReverseByte(USIDR);
+            return (bit_order == BIT_ORDER_MSB_FIRST) ? USIDR : ReverseByte(USIDR);
         }
 
     private:
