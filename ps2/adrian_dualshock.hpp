@@ -112,7 +112,7 @@ namespace adrian
             bool right1 : 1;    // 5.3
             bool triangle : 1;  // 5.4
             bool circle : 1;    // 5.5
-            bool cross : 1;         // 5.6
+            bool cross : 1;     // 5.6
             bool square : 1;    // 5.7
 
             // Analog sticks

@@ -58,7 +58,7 @@ namespace adrian
         /* ===== Functions ===== */
 
         /** Constructor */
-        TrinketSPI()
+        TrinketSPI() : bit_order(adrian::BIT_ORDER_MSB_FIRST)
         {
             // Nothing
         }
@@ -91,6 +91,7 @@ namespace adrian
         virtual void SetBitOrder(const BitOrder order)
         {
             // TODO
+            bit_order = order;
         }
 
         /** Perform a single full-duplex SPI transfer */
@@ -147,7 +148,17 @@ namespace adrian
         {
             volatile int i = 0;
 
-            USIDR = data;
+            // USI is only capable of doing MSB_FIRST from hardware
+            if (bit_order == BIT_ORDER_MSB_FIRST)
+            {
+                USIDR = data;
+            }
+            // We need to manually flip the bits for LSB_FIRST
+            else
+            {
+                USIDR = ReverseByte(data);
+            }
+
             USISR = _BV(USIOIF);
 
             noInterrupts();
@@ -157,17 +168,31 @@ namespace adrian
                 USICR |= _BV(USITC);    // toggle clock
                 i = 1;
                 i = 1;
+                i = 1;
+                i = 1;
+                i = 1;
+                i = 1;
+                i = 1;
+                i = 1;
             }
 
             interrupts();
 
-            return USIDR;
+            // USI is only capable of doing MSB_FIRST from hardware
+            if (bit_order == BIT_ORDER_MSB_FIRST)
+            {
+                return USIDR;
+            }
+            // We need to manually flip the bits for LSB_FIRST
+            return ReverseByte(USIDR);
         }
 
     private:
-        //
-
-
+        // Private members
+        // uint32_t clock;
+        // uint8_t bitOrder;
+        // uint8_t dataMode;
+        BitOrder bit_order;
     };
 
 }   // end namespace adrian

@@ -24,7 +24,10 @@ namespace adrian
         /* ===== Functions ===== */
 
         /** Constructor */
-        ArduinoSPI() : settings(1000000, MSBFIRST, SPI_MODE0)
+        ArduinoSPI() :
+            clock(1000000),
+            bitOrder(MSBFIRST),
+            dataMode(SPI_MODE0)
         {
             // Nothing
         }
@@ -32,13 +35,14 @@ namespace adrian
         /** Initialize the SPI interface (platform dependent) */
         virtual void Initialize()
         {
-            SPI.begin();
+            ::SPI.begin();
+            pinMode(12, INPUT_PULLUP);
         }
 
         /** Release the SPI interface (platform dependent) */
         virtual void Release()
         {
-            SPI.end();
+            ::SPI.end();
         }
 
         /** Set the transfer mode (see SPI::TransferMode) */
@@ -51,15 +55,13 @@ namespace adrian
                 SPI_MODE2,
                 SPI_MODE3,
             };
-            settings._dataMode = spi_mode_lookup[mode];
-
-            // 14000000, MSBFIRST,
+            this->dataMode = spi_mode_lookup[mode];
         }
 
         /** Set the frequency in Hertz */
         virtual void SetFrequency(const uint32_t frequency)
         {
-            settings._clock = frequency;
+            this->clock = frequency;
         }
 
         /** Set the bit order (see SPI::BitOrder) */
@@ -69,7 +71,7 @@ namespace adrian
                 MSBFIRST,
                 LSBFIRST
             };
-            settings._bitOrder = bit_order_lookup[order];
+            this->bitOrder = bit_order_lookup[order];
         }
 
         /** Perform a single full-duplex SPI transfer */
@@ -82,16 +84,15 @@ namespace adrian
             // so we need to copy tx data into rx_buf
             memcpy(rx_buf, tx_buf, num_bytes);
 
-            SPI.beginTransaction(settings);
-            SPI.transfer(rx_buf, num_bytes);
-            SPI.endTransaction();
+            ::SPI.beginTransaction(SPISettings(clock, bitOrder, dataMode));
+            ::SPI.transfer(rx_buf, num_bytes);
+            ::SPI.endTransaction();
         }
 
     private:
-        SPISettings settings;
-        //  uint32_t _clock;
-        //  uint8_t  _bitOrder;
-        //  uint8_t  _dataMode;
+        uint32_t clock;
+        uint8_t bitOrder;
+        uint8_t dataMode;
     };
 
 }   // end namespace adrian

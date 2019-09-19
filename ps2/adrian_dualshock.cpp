@@ -54,8 +54,8 @@ namespace adrian
     {
         // Set up SPI configuration
         m_spi_ptr->SetMode(SPI::TRANSFER_MODE_3);
-        m_spi_ptr->SetBitOrder(adrian::BIT_ORDER_MSB_FIRST);
-        m_spi_ptr->SetFrequency(250 * adrian::KHz);
+        m_spi_ptr->SetBitOrder(adrian::BIT_ORDER_LSB_FIRST);
+        m_spi_ptr->SetFrequency(125 * adrian::KHz);
     }
 
     // Attempt to establish communication with the controller.
@@ -100,7 +100,7 @@ namespace adrian
             m_spi_ptr->Transfer(+analog_poll, +rx_buffer, sizeof(analog_poll));
 
             // Parse results
-            if (rx_buffer[1] == 0x73)
+            if (rx_buffer[2] == 0x5A)
             {
                 DualShock::ParseDigitalButtons(rx_buffer, current_button_states);
                 DualShock::ParseAnalogButtons(rx_buffer, current_button_states);
@@ -117,7 +117,7 @@ namespace adrian
             m_spi_ptr->Transfer(+digital_poll, +rx_buffer, sizeof(digital_poll));
 
             // Parse results
-            if (rx_buffer[1] == 0x41)
+            if (rx_buffer[2] == 0x5A)
             {
                 DualShock::ParseDigitalButtons(rx_buffer, current_button_states);
             }
@@ -158,7 +158,7 @@ namespace adrian
         m_spi_ptr->Transfer(+exit_config_mode, +rx_buffer, sizeof(exit_config_mode));
         // TODO@adrian: error checking
 
-        return false;   // TODO@adrian: not fully implemented
+        return (m_analog_enabled = true);   // TODO@adrian: not fully implemented
     }
 
     // Enter Digital Mode and disable reading pressure values.
