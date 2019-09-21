@@ -59,8 +59,8 @@ namespace adrian
         m_spi_ptr->SetFrequency(125 * adrian::KHz);
 
         // Setup select pin
-        select_pin->SetPinMode(PIN_MODE_OUTPUT);
-        select_pin->Write(true);
+        select_pin->SetPinMode(GPIO::PIN_MODE_OUTPUT);
+        select_pin->Write(1);
     }
 
     // Attempt to establish communication with the controller.
@@ -230,7 +230,7 @@ namespace adrian
     }
 
     // Helper function for sending commands
-    static void DualShock::SendCommand(
+    void DualShock::SendCommand(
         const uint8_t* tx_buffer,
         uint8_t* rx_buffer,
         const uint8_t buffer_size)
@@ -242,7 +242,7 @@ namespace adrian
         this->m_spi_ptr->Transfer(tx_buffer, rx_buffer, buffer_size);
 
         // Return select line to high to end command.
-        this->m_select_pin->Write(0);
+        this->m_select_pin->Write(1);
     }
 
 

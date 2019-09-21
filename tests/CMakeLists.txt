@@ -22,7 +22,6 @@ target_link_libraries(${PROJECT_NAME}_tests
 
 # Add a commmand to build and run tests
 add_custom_target(run_${PROJECT_NAME}_tests
-    COMMAND make ${PROJECT_NAME}_tests
     COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}_tests
     DEPENDS ${PROJECT_NAME}_tests
 )

@@ -11,6 +11,7 @@
 /* ===== Includes ===== */
 #include "../adrian_helpers.hpp"
 #include "../spi/adrian_spi.hpp"
+#include "../gpio/adrian_gpio.hpp"
 
 namespace adrian
 {
@@ -82,7 +83,7 @@ namespace adrian
     private:
 
         /** Helper functions for sending commands */
-        static void SendCommand(
+        void SendCommand(
             const uint8_t* tx_buffer,
             uint8_t* rx_buffer,
             const uint8_t buffer_size);

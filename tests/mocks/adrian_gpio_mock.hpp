@@ -5,8 +5,8 @@
  * Copyright 2019
  */
 
-#ifndef ADRIAN_SPI_MOCK_HPP_
-#define ADRIAN_SPI_MOCK_HPP_
+#ifndef ADRIAN_GPIO_MOCK_HPP_
+#define ADRIAN_GPIO_MOCK_HPP_
 
 /* ===== Includes ===== */
 #include <gmock/gmock.h>
@@ -22,10 +22,8 @@ namespace adrian
     public:
         MOCK_METHOD(void, SetPinMode, (const PinMode mode), (override));
         MOCK_METHOD(void, Write, (const bool state), (const, override));
-        MOCK_METHOD(void, operator=, (const bool state), (const, override));
         MOCK_METHOD(bool, Read, (), (const, override));
-        MOCK_METHOD(bool, operator!, (), (const, override));
     };
 }
 
-#endif  // ADRIAN_SPI_MOCK_HPP_
+#endif  // ADRIAN_GPIO_MOCK_HPP_
