@@ -47,8 +47,9 @@ namespace adrian
     /* ===== DualShock Functions ===== */
 
     // Constructor - assumes SPI interface is already initialized.
-    DualShock::DualShock(SPI* const spi_interface) :
+    DualShock::DualShock(SPI* const spi_interface, GPIO* const select_pin) :
         m_spi_ptr(spi_interface),
+        m_select_pin(select_pin),
         m_is_connected(false),
         m_analog_enabled(false)
     {
@@ -56,6 +57,10 @@ namespace adrian
         m_spi_ptr->SetMode(SPI::TRANSFER_MODE_3);
         m_spi_ptr->SetBitOrder(adrian::BIT_ORDER_LSB_FIRST);
         m_spi_ptr->SetFrequency(125 * adrian::KHz);
+
+        // Setup select pin
+        select_pin->SetPinMode(PIN_MODE_OUTPUT);
+        select_pin->Write(true);
     }
 
     // Attempt to establish communication with the controller.
@@ -97,7 +102,7 @@ namespace adrian
         {
             // Analog poll
             uint8_t rx_buffer[sizeof(analog_poll)] = { 0 };
-            m_spi_ptr->Transfer(+analog_poll, +rx_buffer, sizeof(analog_poll));
+            this->SendCommand(+analog_poll, +rx_buffer, sizeof(analog_poll));
 
             // Parse results
             if (rx_buffer[2] == 0x5A)
@@ -114,7 +119,7 @@ namespace adrian
         {
             // Digital poll
             uint8_t rx_buffer[sizeof(digital_poll)] = { 0 };
-            m_spi_ptr->Transfer(+digital_poll, +rx_buffer, sizeof(digital_poll));
+            this->SendCommand(+digital_poll, +rx_buffer, sizeof(digital_poll));
 
             // Parse results
             if (rx_buffer[2] == 0x5A)
@@ -135,27 +140,27 @@ namespace adrian
         uint8_t rx_buffer[sizeof(analog_poll)] = {};
 
         // Enter Config Mode
-        m_spi_ptr->Transfer(+enter_config_mode, +rx_buffer, sizeof(enter_config_mode));
+        this->SendCommand(+enter_config_mode, +rx_buffer, sizeof(enter_config_mode));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Enable Analog Mode
-        m_spi_ptr->Transfer(+enable_analog_mode, +rx_buffer, sizeof(enable_analog_mode));
+        this->SendCommand(+enable_analog_mode, +rx_buffer, sizeof(enable_analog_mode));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Enable Motor Commands
-        m_spi_ptr->Transfer(+enable_motor_command, +rx_buffer, sizeof(enable_motor_command));
+        this->SendCommand(+enable_motor_command, +rx_buffer, sizeof(enable_motor_command));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Configure Pressure Sensing
-        m_spi_ptr->Transfer(+config_pressure_values, +rx_buffer, sizeof(config_pressure_values));
+        this->SendCommand(+config_pressure_values, +rx_buffer, sizeof(config_pressure_values));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Exit Config Mode
-        m_spi_ptr->Transfer(+exit_config_mode, +rx_buffer, sizeof(exit_config_mode));
+        this->SendCommand(+exit_config_mode, +rx_buffer, sizeof(exit_config_mode));
         // TODO@adrian: error checking
 
         return (m_analog_enabled = true);   // TODO@adrian: not fully implemented
@@ -223,6 +228,23 @@ namespace adrian
         button_state_out.left2_pressure    = analog_bytes[DUALSHOCK_ANALOG_L2];
         button_state_out.right2_pressure   = analog_bytes[DUALSHOCK_ANALOG_R2];
     }
+
+    // Helper function for sending commands
+    static void DualShock::SendCommand(
+        const uint8_t* tx_buffer,
+        uint8_t* rx_buffer,
+        const uint8_t buffer_size)
+    {
+        // Pull select line low.
+        this->m_select_pin->Write(0);
+
+        // Send command and receive response over SPI.
+        this->m_spi_ptr->Transfer(tx_buffer, rx_buffer, buffer_size);
+
+        // Return select line to high to end command.
+        this->m_select_pin->Write(0);
+    }
+
 
 }   // end namespace ps2
 

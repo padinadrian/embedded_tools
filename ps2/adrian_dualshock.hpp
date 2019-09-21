@@ -30,7 +30,7 @@ namespace adrian
          * Assumes SPI interface is already initialized.
          * @param[in] spi_interface - Pointer to SPI device.
          */
-        DualShock(SPI* const spi_interface);
+        DualShock(SPI* const spi_interface, GPIO* const select_pin);
 
         /** Attempt to establish communication with the controller. */
         bool Connect();
@@ -80,7 +80,16 @@ namespace adrian
             ButtonState& button_state_out);
 
     private:
+
+        /** Helper functions for sending commands */
+        static void SendCommand(
+            const uint8_t* tx_buffer,
+            uint8_t* rx_buffer,
+            const uint8_t buffer_size);
+
+    private:
         SPI* const m_spi_ptr;
+        GPIO* const m_select_pin;
         bool m_is_connected;
         bool m_analog_enabled;
 
