@@ -9,7 +9,7 @@
 #define ADRIAN_N64_CONSOLE_HPP_
 
 /* ===== Includes ===== */
-#include <cstring>
+// #include <cstring>
 #include "adrian_n64_controller.hpp"
 
 namespace adrian {
@@ -39,7 +39,7 @@ namespace adrian {
 
         /**
          * Performs a blocking wait for a command from the console.
-         * Returns true if the 
+         * Returns true if the
          */
         bool WaitForCommand(N64Controller::Command& command)
         {

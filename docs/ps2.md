@@ -159,25 +159,30 @@ means stronger vibration.
 The basic functionality for using the DualShock controller
 in your embedded projects is wrapped in the adrian::DualShock
 class. This interface is designed to be easily extendable to
-any project - simply implement the SPI interface (or use an
-existing interface, such as adrian::ArduinoSPI) and you can
-connect to the controller and read the buttons and joysticks.
+any project - simply implement the proper interfaces and you
+can connect to the controller and read data.
+
+You will need to implement:
+* adrian::SPI
+* adrian::GPIO
 
 Example of using the DualShock class:
 
 ```c++
+class MySPI : public adrian::SPI { /* implementation goes here */};
+class MyGPIO : public adrian::MyGPIO { /* implementation goes here */};
+
 main()
 {
     // Initialization
-    ArduinoSPI spi_impl;
+    MySPI spi_impl;
+    MyGPIO select_pin
     spi_impl.Initialize();
+    adrian::DualShock ps2_controller(&spi_impl, &select_pin);
 
-    adrian::DualShock ps2_controller(&spi_impl);
+    // Get button data
     adrian::DualShock::ButtonState buttons;
-
-    digitalWrite(SELECT_PIN, LOW);      // Lower select line
-    ps2_controller.Poll(buttons);       // Get button data
-    digitalWrite(SELECT_PIN, HIGH);     // Raise select line
+    ps2_controller.Poll(buttons);
 }
 ```
 

@@ -1,9 +1,9 @@
 # embedded_tools
-Submodule for useful tools for embedded development.
+Collection of useful tools for embedded development.
 
 ## Introduction
 
-This projects is a container for a bunch of useful code 
+This repository is a container for a bunch of useful code
 that I have written over the years for my own personal
 embedded projects. I provide no guarantees for stability,
 correctness, or even basic code style and consistency.
