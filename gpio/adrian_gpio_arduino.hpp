@@ -37,10 +37,10 @@ namespace adrian
             switch (mode)
             {
                 case PIN_MODE_OUTPUT:
-                    pinMode(m_pin_number, INPUT);
+                    pinMode(m_pin_number, OUTPUT);
                     break;
                 case PIN_MODE_INPUT_PULLUP:
-                    pinMode(m_pin_number, INPUT);
+                    pinMode(m_pin_number, INPUT_PULLUP);
                     break;
                 case PIN_MODE_INPUT:
                 default:    // fall-through
@@ -50,7 +50,7 @@ namespace adrian
         }
 
         /** Set the state of the pin. */
-        virtual void Write(const bool state) const
+        virtual void Write(const bool state)
         {
             digitalWrite(m_pin_number, state ? HIGH : LOW);
         }

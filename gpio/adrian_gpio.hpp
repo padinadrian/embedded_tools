@@ -43,7 +43,7 @@ namespace adrian
          * Pin must be configured as an OUTPUT first.
          * Writing to an INPUT pin may result in undefined behavior.
          */
-        virtual void Write(const bool state) const = 0;
+        virtual void Write(const bool state) = 0;
 
         /**
          * Read the state of the pin.
@@ -53,7 +53,7 @@ namespace adrian
         virtual bool Read() const = 0;
 
         /** Operator form of Write. */
-        void operator=(const bool state) const
+        virtual void operator=(const bool state)
         {
             this->Write(state);
         }
@@ -63,7 +63,7 @@ namespace adrian
          * Uses the "Safe Bool Idiom"
          * See: https://www.artima.com/cppsource/safebool.html
          */
-        bool operator!() const
+        virtual bool operator!() const
         {
             return !this->Read();
         }
