@@ -3,9 +3,10 @@
 # List unit test source files
 add_executable(${PROJECT_NAME}_tests
     # Tests
-    adrian_debounced_button_test_1.cpp
-    adrian_helpers_test_1.cpp
-    adrian_dualshock_test_1.cpp
+    adrian_debounced_button_test.cpp
+    adrian_helpers_test.cpp
+    # adrian_dualshock_test.cpp
+    adrian_fixed_list_test.cpp
 
     # Sources
     ../ps2/adrian_dualshock.cpp

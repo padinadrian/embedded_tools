@@ -7,7 +7,7 @@
 
 /* ===== Includes ===== */
 #include <gtest/gtest.h>
-#include "../adrian_debounced_button.hpp"
+#include "adrian_debounced_button.hpp"
 using namespace adrian;
 
 /* ===== Tests ===== */

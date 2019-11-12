@@ -7,7 +7,7 @@
 
 /* ===== Includes ===== */
 #include <gtest/gtest.h>
-#include "../adrian_helpers.hpp"
+#include "adrian_helpers.hpp"
 using namespace adrian;
 
 /* ===== Tests ===== */
