@@ -2,9 +2,12 @@
 
 /* ===== Includes ===== */
 #include <stdint.h>
+#include <iostream>
 
 namespace adrian
 {
+    /* ===== Typedefs ===== */
+
     /**
      * Type definition for a generic Task function.
      * Accepts a single void pointer as an argument
@@ -12,8 +15,8 @@ namespace adrian
      */
     typedef void (*TaskFunction)(void*);
 
-    /** Forward declaration. */
-    class TaskScheduler;
+
+    /* ===== Public Classes ===== */
 
     /** Task class for wrapping TaskFunctions and arguments. */
     class Task
@@ -40,9 +43,11 @@ namespace adrian
     };
 
     /** Class for scheduling future tasks. */
+    template<size_t N>
     class TaskScheduler
     {
     public:
+
         /** Schedule a task to execute once in the future. */
         void ScheduleSingleTask(
                 const Task task,
@@ -72,29 +77,40 @@ namespace adrian
 
     private:
 
-        /** */
+        /* ===== Private Classes ===== */
+
         struct ScheduledTask
         {
             Task task;
-            uint32_t remaining;
-
-
+            uint32_t execs_remaining;
+            uint32_t exec_time_ms;
         };
+
+        /* ===== Private Functions ===== */
 
         void ScheduleTask(
                 const Task task,
                 const uint32_t period_ms,
                 const bool repeating)
         {
-
+            const uint32_t scheduled_exec_time = period_ms +
+            for (auto iter = scheduled_tasks.Begin();
+                iter != scheduled_tasks.End();
+                iter++)
+            {
+                if ()
+            }
         }
 
-
-
+    private:
+        /* ===== Private Data ===== */
+        FixedList<ScheduledTask, N> scheduled_tasks;
     };
 }
 
 int main()
 {
+    adrian::TaskScheduler scheduler;
 
+    scheduler.ScheduleSingleTask()
 }
