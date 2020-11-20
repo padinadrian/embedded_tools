@@ -27,7 +27,7 @@ TEST(AdrianDualShock, Constructor)
     EXPECT_CALL(spi, SetFrequency(125 * adrian::KHz)).Times(1);
 
     MockGPIO select_pin;
-    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PIN_MODE_OUTPUT)).Times(1);
+    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PM_OUTPUT)).Times(1);
     EXPECT_CALL(select_pin, Write(1)).Times(1);
 
     DualShock controller(&spi, &select_pin);
@@ -43,7 +43,7 @@ TEST(AdrianDualShock, PollNoRumble)
     EXPECT_CALL(spi, Transfer).Times(1);
 
     MockGPIO select_pin;
-    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PIN_MODE_OUTPUT)).Times(1);
+    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PM_OUTPUT)).Times(1);
     EXPECT_CALL(select_pin, Write(1)).Times(2);
     EXPECT_CALL(select_pin, Write(0)).Times(1);
 
@@ -62,7 +62,7 @@ TEST(AdrianDualShock, EnableAnalog)
     EXPECT_CALL(spi, Transfer).Times(5);
 
     MockGPIO select_pin;
-    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PIN_MODE_OUTPUT)).Times(1);
+    EXPECT_CALL(select_pin, SetPinMode(adrian::GPIO::PM_OUTPUT)).Times(1);
     EXPECT_CALL(select_pin, Write(1)).Times(6);
     EXPECT_CALL(select_pin, Write(0)).Times(5);
 

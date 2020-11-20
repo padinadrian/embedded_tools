@@ -59,7 +59,7 @@ namespace adrian
         m_spi_ptr->SetFrequency(125 * adrian::KHz);
 
         // Setup select pin
-        select_pin->SetPinMode(GPIO::PIN_MODE_OUTPUT);
+        select_pin->SetPinMode(GPIO::PM_OUTPUT);
         select_pin->Write(1);
     }
 

@@ -25,9 +25,9 @@ namespace adrian
         /* ===== Enums ===== */
         enum PinMode
         {
-            PIN_MODE_INPUT,
-            PIN_MODE_OUTPUT,
-            PIN_MODE_INPUT_PULLUP,
+            PM_INPUT,
+            PM_OUTPUT,
+            PM_INPUT_PULLUP,
         };
 
         /* ===== Functions ===== */

@@ -36,13 +36,13 @@ namespace adrian
         {
             switch (mode)
             {
-                case PIN_MODE_OUTPUT:
+                case PM_OUTPUT:
                     pinMode(m_pin_number, OUTPUT);
                     break;
-                case PIN_MODE_INPUT_PULLUP:
+                case PM_INPUT_PULLUP:
                     pinMode(m_pin_number, INPUT_PULLUP);
                     break;
-                case PIN_MODE_INPUT:
+                case PM_INPUT:
                 default:    // fall-through
                     pinMode(m_pin_number, INPUT);
                     break;
