@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<h1 id="playstation-2-controller-interface">PlayStation 2 Controller Interface</h1>
+<p>This document will detail the interface used by the PlayStation 2 to communicate with the DualShock 2 controllers, as well as examples for using the adrian PS2 software interface.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol style="list-style-type: decimal">
+<li><a href="#physical-layer">Physical Layer</a></li>
+<li><a href="#data-layer">Data Layer</a></li>
+<li><a href="#software">Software</a></li>
+</ol>
+<h2 id="physical-layer">Physical Layer</h2>
+<h3 id="controller-inputs">Controller Inputs</h3>
+<p>The DualShock controller consists of several different kinds of inputs:</p>
+<ul>
+<li>12 digital/analog buttons</li>
+<li>4 digital-only buttons</li>
+<li>2 analog joysticks</li>
+</ul>
+<p>Based on the configuration, the 12 main buttons can be either simple on/off buttons or fully pressure-sensitive analog inputs. Start, select, and L3/R3 (joystick buttons) are digital-only.</p>
+<p>The analog joysticks both sit on a two-axis grid and report their position as a pair of X-Y coordinates.</p>
+<p>The controller also has two motors, one larger in the left and one smaller on the right, that can be used for vibration feedback.</p>
+<h3 id="connector-pinout">Connector Pinout</h3>
+<p>There are nine pins on the DualShock connector, of which only eight are used. The pins are as follows, from left to right on the male side:</p>
+<ol style="list-style-type: decimal">
+<li>Brown - Data (controler to console)</li>
+<li>Orange - Command (console to controller)</li>
+<li>Gray - Motor power (7.2V - 9V)</li>
+<li>Black - Ground (GND)</li>
+<li>Red - Power (3.3V)</li>
+<li>Yellow - Attention</li>
+<li>Blue - Clock</li>
+<li>White - Unused</li>
+<li>Green - Acknowledge</li>
+</ol>
+<h4 id="male-connector">Male Connector</h4>
+<div class="figure">
+<img src="ps2_connector.jpg" title="DualShock connector wires." />
+
+</div>
+<h3 id="data-wires">Data Wires</h3>
+<p>The PlayStation 2 uses a modified version of the <a href="https://en.wikipedia.org/wiki/Serial_Peripheral_Interface">SPI</a> protocol to communicate with the controller. This protocol is discussed more in-depth in the <a href="#data-layer">Data Layer</a> section.</p>
+<p>SPI uses four pins: two data pins (MISO and MOSI), a clock pin, and a select pin.</p>
+<ul>
+<li><p>The <strong>brown</strong> data wire is the equivalent of the MISO pin in SPI. This pin is used to transfer data from the controller to the console. It is an open-collector output, so it requires a pull-up resistor of about 1k to 10k Ohms.</p></li>
+<li><p>The <strong>orange</strong> command wire is the equivalent of the MOSI pin in SPI. This pin is used by the console to send commands to the controller, e.g. to request button data.</p></li>
+<li><p>The <strong>blue</strong> clock wire is the equivalent of the SPI clock pin. Officially the speed of this clock is 500kHz, but I have found that 250kHz is more reliable, especially with 3rd-party controllers.</p></li>
+<li><p>The <strong>yellow</strong> attention wire is the equivalent of the select pin in SPI. It should float high when not in use and be pulled low before each data transfer, then released high again.</p></li>
+</ul>
+<p>Additionally, the <strong>green</strong> acknowledge wire is an output from the controller which verifies that it is connected and transmitting properly. If you are interfacing with a controller, you have the option to check this pin or not (I generally do not). However, you must provide this output if you plan to interface with the PlayStation 2 console as it requires this pin to behave properly.</p>
+<h3 id="power-wires">Power Wires</h3>
+<ul>
+<li><p>The red power line is officially 5V but it works easily at 3.3V and should work anywhere between 3-5V.</p></li>
+<li><p>The gray power line which powers the vibration motors is listed as 9V but can work as low as 5V. The power of the vibration scales with the voltage (high voltage = more vibration). However, the motors can draw 500mA or more, so be careful about the power source.</p></li>
+</ul>
+<h2 id="data-layer">Data Layer</h2>
+<p>The communication protocol used by the PS2 is a modified form of SPI with a custom data protocol. SPI is full-duplex, meaning the console sends commands to the controller and gets the response within the same transaction.</p>
+<h3 id="transaction-overview">Transaction Overview</h3>
+<p>The general format for a transation goes like this:</p>
+<ol style="list-style-type: decimal">
+<li><p>The PS2 console pulls the select pin low to indicate it is starting a transaction.</p></li>
+<li><p>The console then sends a 3-byte header, and in the same bytes the controller sends a 3-byte reponse indicating the current configuration state.</p></li>
+<li><p>The console then sends 2 bytes indicating the vibration level, and the console sends the digital button states.</p></li>
+<li><p>Depending on the configuration, the controller will then send up to 16 additional bytes with the joystick and analog button data.</p></li>
+</ol>
+<h3 id="high-level-protocol">High-Level Protocol</h3>
+<p>When the controller is first plugged in it defaults to digital mode and transmits only the digital button data.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Byte #</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Command (hex)</td>
+<td align="center">0x01</td>
+<td align="center">0x42</td>
+<td align="center">0x00</td>
+<td align="center">0x00</td>
+<td align="center">0x00</td>
+</tr>
+<tr class="even">
+<td>Data (hex)</td>
+<td align="center">0xFF</td>
+<td align="center">0x41</td>
+<td align="center">0x5A</td>
+<td align="center">0xFF</td>
+<td align="center">0xFF</td>
+</tr>
+<tr class="odd">
+<td>Section</td>
+<td align="center">H</td>
+<td align="center">H</td>
+<td align="center">H</td>
+<td align="center">D</td>
+<td align="center">D</td>
+</tr>
+</tbody>
+</table>
+<p>The first 3 bytes sent from the console are the header (section H).</p>
+<h4 id="first-byte">First Byte</h4>
+<ul>
+<li><p>Console always sends 0x01</p></li>
+<li><p>Controller always sends 0xFF</p></li>
+</ul>
+<h4 id="second-byte">Second Byte</h4>
+<ul>
+<li><p>Console sends <a href="#command-type">command type</a>, in this case 0x42</p></li>
+<li><p>Controller sends current <a href="#device-mode">device mode</a>, in this case 0x41</p></li>
+</ul>
+<h4 id="third-byte">Third Byte</h4>
+<ul>
+<li><p>Console always sends 0x00</p></li>
+<li><p>Controller always sends 0x5A</p></li>
+</ul>
+<p>After the header comes the data section, which can be between 2 and 18 bytes. In the default digital mode, this consists of 2 bytes which are the vibration commands, where a higher number means stronger vibration.</p>
+<h4 id="command-type">Command Type</h4>
+<p>TODO</p>
+<h2 id="software">Software</h2>
+<p>The basic functionality for using the DualShock controller in your embedded projects is wrapped in the adrian::DualShock class. This interface is designed to be easily extendable to any project - simply implement the proper interfaces and you can connect to the controller and read data.</p>
+<p>You will need to implement:</p>
+<ul>
+<li><p>adrian::SPI</p></li>
+<li><p>adrian::GPIO</p></li>
+</ul>
+<p>Note: Implementations for these classes are already available for Arduino-based platforms.</p>
+<p>Example of using the DualShock class:</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">class</span> MySPI : <span class="kw">public</span> adrian::SPI { <span class="co">/* implementation goes here */</span>};
+<span class="kw">class</span> MyGPIO : <span class="kw">public</span> adrian::GPIO { <span class="co">/* implementation goes here */</span>};
+
+main()
+{
+    <span class="co">// Initialization</span>
+    MySPI spi_impl;
+    MyGPIO select_pin;
+    spi_impl.Initialize();
+    adrian::DualShock ps2_controller(&amp;spi_impl, &amp;select_pin);
+
+    <span class="co">// Get button data</span>
+    adrian::DualShock::ButtonState buttons;
+    ps2_controller.Poll(buttons);
+}</code></pre></div>
+<h3 id="dualshock-class">DualShock Class</h3>
+<p>Here is a simplified version of the DualShock class:</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/** Represents a DualShock controller. */</span>
+<span class="kw">class</span> DualShock
+{
+<span class="kw">public</span>:
+    DualShock(SPI* <span class="at">const</span> spi_interface);
+
+    <span class="co">// Connect and disconnect the controller.</span>
+    <span class="dt">bool</span> Connect();
+    <span class="dt">bool</span> Disconnect();
+    <span class="dt">bool</span> IsConnected() <span class="at">const</span>;
+
+    <span class="co">// Ask the controller for button info and</span>
+    <span class="co">// send rumble commands.</span>
+    <span class="dt">void</span> Poll(ButtonState&amp; current_button_states);
+    <span class="dt">void</span> Poll(<span class="dt">uint8_t</span> left_rumble,
+              <span class="dt">uint8_t</span> right_rumble,
+              ButtonState&amp; current_button_states);
+
+    <span class="co">// Turn on/off analog mode (required to get joystick data)</span>
+    <span class="dt">bool</span> EnableAnalog();
+    <span class="dt">bool</span> DisableAnalog();
+};</code></pre></div>
+<h4 id="function-description">Function Description</h4>
+<p>Constructor</p>
+<ul>
+<li><code>DualShock(spi_interface)</code> - Create a DualShock object and pass in a pointer to a valid SPI interface.</li>
+</ul>
+<p>Connecting</p>
+<ul>
+<li><p><code>bool Connect()</code> - Connect to the controller. Returns true if connection succeeded, otherwise false.</p></li>
+<li><p><code>bool Disconnect()</code> - Disconnect from the controller.</p></li>
+<li><p><code>bool IsConnected()</code> - Check if the controller is properly connected.</p></li>
+</ul>
+<p>Polling</p>
+<ul>
+<li><p><code>void Poll(buttons)</code> - Grab the input data from the controller and copy it into the <code>buttons</code> object.</p></li>
+<li><p><code>void Poll(left_rumble, right_rumble, buttons)</code> - Grab the input data from the controller, and send the controller a command to activate the rumble motors.</p></li>
+</ul>
+<p>Configuration</p>
+<ul>
+<li><p><code>bool EnableAnalog()</code> - Turn on analog mode (required for joysticks).</p></li>
+<li><p><code>bool DisableAnalog()</code> - Turn off analog mode.</p></li>
+</ul>
+<h3 id="example">Example</h3>
+<p>Below is a complete example of using the DualShock class with an Arduino Uno. In this example, pressing X on the controller will cause an external LED to light up.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// mysketch.ino</span>
+
+<span class="pp">#include </span><span class="im">&quot;embedded_tools/spi/adrian_spi_arduino.hpp&quot;</span>
+<span class="pp">#include </span><span class="im">&quot;embedded_tools/ps2/adrian_dualshock.hpp&quot;</span>
+
+<span class="co">// Globals</span>
+
+<span class="at">static</span> adrian::ArduinoSPI spi;
+<span class="at">static</span> adrian::ArduinoGPIO select_pin(<span class="dv">10</span>);
+<span class="at">static</span> adrian::ArduinoGPIO led(<span class="dv">9</span>);
+<span class="at">static</span> adrian::DualShock ps2_controller(&amp;spi_impl, &amp;select_pin);
+<span class="at">static</span> adrian::DualShock::ButtonState buttons;
+
+setup()
+{
+    spi.Initialize();
+    led.SetPinMode(adrian::GPIO::PM_OUTPUT);
+    led.Write(<span class="dv">0</span>);
+}
+
+loop()
+{
+    <span class="co">// Poll the controller for the button status.</span>
+    ps2_controller.Poll(buttons);
+
+    <span class="co">// If the X button is pressed, light up the LED.</span>
+    led.Write((buttons.digital_valid &amp;&amp; buttons.cross));
+
+    delay(<span class="dv">100</span>);
+}</code></pre></div>
+<h2 id="sources">Sources</h2>
+<p>This data was collected over time from various sites, and I want to pay credit to those who have gone before me and did the hard work of reverse engineering the SPI protocols.</p>
+<ol style="list-style-type: decimal">
+<li><p>Curious Inventor - Interfacing a PS2 (PlayStation 2) Controller: <a href="http://store.curiousinventor.com/PS2" class="uri">http://store.curiousinventor.com/PS2</a></p></li>
+<li><p>SPI (Serial Peripheral Interface): <a href="https://en.wikipedia.org/wiki/Serial_Peripheral_Interface" class="uri">https://en.wikipedia.org/wiki/Serial_Peripheral_Interface</a></p></li>
+</ol>
+</body>
+</html>

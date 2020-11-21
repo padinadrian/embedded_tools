@@ -51,7 +51,7 @@ right on the male side:
 
 #### Male Connector
 
-![alt text](ps2_connector.jpg "DualShock connector wires.")
+![](ps2_connector.jpg "DualShock connector wires.")
 
 ### Data Wires
 
@@ -114,11 +114,14 @@ The general format for a transation goes like this:
 
 1. The PS2 console pulls the select pin low to indicate it is
    starting a transaction.
+
 2. The console then sends a 3-byte header, and in the same
    bytes the controller sends a 3-byte reponse indicating
    the current configuration state.
+
 3. The console then sends 2 bytes indicating the vibration
    level, and the console sends the digital button states.
+
 4. Depending on the configuration, the controller will then
    send up to 16 additional bytes with the joystick and
    analog button data.
@@ -128,24 +131,32 @@ The general format for a transation goes like this:
 When the controller is first plugged in it defaults to digital
 mode and transmits only the digital button data.
 
-| Byte #        |  1   |  2   |  3   |  4   |  5   |
-| ------------- |:----:|:----:|:----:|:----:|:----:|
-| Command (hex) | 0x01 | 0x42 | 0x00 | 0x00 | 0x00 |
-| Data (hex)    | 0xFF | 0x41 | 0x5A | 0xFF | 0xFF |
-| Section       |  H   |  H   |  H   |  D   |  D   |
+| Byte #            |  1   |  2   |  3   |  4   |  5   |
+| ----------------- |:----:|:----:|:----:|:----:|:----:|
+| Command (hex)     | 0x01 | 0x42 | 0x00 | 0x00 | 0x00 |
+| Data (hex)        | 0xFF | 0x41 | 0x5A | 0xFF | 0xFF |
+| Section           |  H   |  H   |  H   |  D   |  D   |
 
 The first 3 bytes sent from the console are the header
 (section H).
 
-* First byte:
-  * Console always sends 0x01
-  * Controller always sends 0xFF
-* Second byte:
-  * Console sends [command type](#command-type), in this case 0x42
-  * Controller sends current [device mode](#device-mode), in this case 0x41
-* Third byte:
-  * Console always sends 0x00
-  * Controller always sends 0x5A
+#### First Byte
+
+* Console always sends 0x01
+
+* Controller always sends 0xFF
+
+#### Second Byte
+
+* Console sends [command type](#command-type), in this case 0x42
+
+* Controller sends current [device mode](#device-mode), in this case 0x41
+
+#### Third Byte
+
+* Console always sends 0x00
+
+* Controller always sends 0x5A
 
 After the header comes the data section, which can be between
 2 and 18 bytes. In the default digital mode, this consists of
@@ -153,6 +164,8 @@ After the header comes the data section, which can be between
 means stronger vibration.
 
 #### Command Type
+
+TODO
 
 ## Software
 
@@ -163,10 +176,12 @@ any project - simply implement the proper interfaces and you
 can connect to the controller and read data.
 
 You will need to implement:
+
 * adrian::SPI
+
 * adrian::GPIO
 
-Note: Iplementations for these classes are already available
+Note: Implementations for these classes are already available
 for Arduino-based platforms.
 
 Example of using the DualShock class:
@@ -221,24 +236,32 @@ public:
 #### Function Description
 
 Constructor
+
 * `DualShock(spi_interface)` - Create a DualShock object and
   pass in a pointer to a valid SPI interface.
 
 Connecting
+
 * `bool Connect()` - Connect to the controller.
   Returns true if connection succeeded, otherwise false.
+
 * `bool Disconnect()` - Disconnect from the controller.
+
 * `bool IsConnected()` - Check if the controller is properly connected.
 
 Polling
+
 * `void Poll(buttons)` - Grab the input data from the controller
   and copy it into the `buttons` object.
+
 * `void Poll(left_rumble, right_rumble, buttons)` - Grab the input
   data from the controller, and send the controller a command
   to activate the rumble motors.
 
 Configuration
+
 * `bool EnableAnalog()` - Turn on analog mode (required for joysticks).
+
 * `bool DisableAnalog()` - Turn off analog mode.
 
 ### Example
@@ -287,7 +310,7 @@ want to pay credit to those who have gone before me and did
 the hard work of reverse engineering the SPI protocols.
 
 1. Curious Inventor - Interfacing a PS2 (PlayStation 2) Controller:
-   http://store.curiousinventor.com/PS2
+   [http://store.curiousinventor.com/PS2](http://store.curiousinventor.com/PS2)
 
 2. SPI (Serial Peripheral Interface):
-   https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
+   [https://en.wikipedia.org/wiki/Serial_Peripheral_Interface](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
