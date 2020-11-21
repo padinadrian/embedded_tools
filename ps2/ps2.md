@@ -97,7 +97,7 @@ properly.
 
 * The gray power line which powers the vibration motors is
   listed as 9V but can work as low as 5V. The power of the
-  vibration scales with the voltage (high voltag = more
+  vibration scales with the voltage (high voltage = more
   vibration). However, the motors can draw 500mA or more,
   so be careful about the power source.
 
@@ -166,17 +166,20 @@ You will need to implement:
 * adrian::SPI
 * adrian::GPIO
 
+Note: Iplementations for these classes are already available
+for Arduino-based platforms.
+
 Example of using the DualShock class:
 
 ```c++
 class MySPI : public adrian::SPI { /* implementation goes here */};
-class MyGPIO : public adrian::MyGPIO { /* implementation goes here */};
+class MyGPIO : public adrian::GPIO { /* implementation goes here */};
 
 main()
 {
     // Initialization
     MySPI spi_impl;
-    MyGPIO select_pin
+    MyGPIO select_pin;
     spi_impl.Initialize();
     adrian::DualShock ps2_controller(&spi_impl, &select_pin);
 
@@ -253,44 +256,25 @@ will cause an external LED to light up.
 // Globals
 
 static adrian::ArduinoSPI spi;
-static adrian::DualShock ps2_controller(&spi);
+static adrian::ArduinoGPIO select_pin(10);
+static adrian::ArduinoGPIO led(9);
+static adrian::DualShock ps2_controller(&spi_impl, &select_pin);
 static adrian::DualShock::ButtonState buttons;
-
-// Need to define a slave select pin
-const int SSEL_PIN = 10;
-
-// External LED (since built-in is 13, already used for SCLK)
-const int LED_PIN = 9;
 
 setup()
 {
     spi.Initialize();
-    pinMode(SSEL_PIN, OUTPUT);
-    pinMode(LED_PIN, OUTPUT);
-
-    digitalWrite(SSEL_PIN, HIGH);
-    digitalWrite(LED_PIN, LOW);
+    led.SetPinMode(adrian::GPIO::PM_OUTPUT);
+    led.Write(0);
 }
 
 loop()
 {
-    // Try to connect to controller
-    if (!ps2_controller.IsConnected())
-    {
-        digitalWrite(SSEL_PIN, LOW);
-        while (!ps2_controller.Connect()) { delay(1000); }
-        digitalWrite(SSEL_PIN, HIGH);
-    }
-
     // Poll the controller for the button status.
-    digitalWrite(SSEL_PIN, LOW);
     ps2_controller.Poll(buttons);
-    digitalWrite(SSEL_PIN, HIGH);
 
-    digitalWrite(
-        LED_PIN,
-        (buttons.digital_valid && buttons.cross) ? HIGH : LOW
-    );
+    // If the X button is pressed, light up the LED.
+    led.Write((buttons.digital_valid && buttons.cross));
 
     delay(100);
 }
@@ -304,3 +288,6 @@ the hard work of reverse engineering the SPI protocols.
 
 1. Curious Inventor - Interfacing a PS2 (PlayStation 2) Controller:
    http://store.curiousinventor.com/PS2
+
+2. SPI (Serial Peripheral Interface):
+   https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
