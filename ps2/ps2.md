@@ -1,9 +1,7 @@
-# PlayStation 2 Controller Interface
-
 This document will detail the interface used by the
 PlayStation 2 to communicate with the DualShock 2
 controllers, as well as examples for using the
-adrian PS2 software interface.
+adrian::PS2 software interface.
 
 ## Table of Contents
 1. [Physical Layer](#physical-layer)
@@ -310,7 +308,7 @@ want to pay credit to those who have gone before me and did
 the hard work of reverse engineering the SPI protocols.
 
 1. Curious Inventor - Interfacing a PS2 (PlayStation 2) Controller:
-   [http://store.curiousinventor.com/PS2](http://store.curiousinventor.com/PS2)
+   [http://store.curiousinventor.com/guides/PS2](http://store.curiousinventor.com/guides/PS2)
 
 2. SPI (Serial Peripheral Interface):
    [https://en.wikipedia.org/wiki/Serial_Peripheral_Interface](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
