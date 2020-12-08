@@ -14,10 +14,10 @@ namespace adrian
     static const uint8_t digital_poll[5] = { 0x01, 0x42, 0x00, 0x00, 0x00 };
     static const uint8_t enter_config_mode[5] = { 0x01, 0x43, 0x00, 0x01, 0x00 };
     static const uint8_t enable_analog_mode[9] = { 0x01, 0x44, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00 };
-    static const uint8_t enable_motor_command[9] = { 0x01, 0x4D, 0x00, 0x00, 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
-    static const uint8_t config_pressure_values[9] = { 0x01, 0x4F, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x00, 0x00 };
+    // static const uint8_t enable_motor_command[9] = { 0x01, 0x4D, 0x00, 0x00, 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
+    // static const uint8_t config_pressure_values[9] = { 0x01, 0x4F, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x00, 0x00 };
     static const uint8_t exit_config_mode[9] = { 0x01, 0x43, 0x00, 0x00, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A };
-    static const uint8_t analog_poll[21] = { 0x01, 0x42, 0x00, 0x00, 0x00 };
+    static const uint8_t analog_poll[9] = { 0x01, 0x42, 0x00, 0x00, 0x00 };
 
     /* ===== Enums ===== */
 
@@ -105,7 +105,7 @@ namespace adrian
             this->SendCommand(+analog_poll, +rx_buffer, sizeof(analog_poll));
 
             // Parse results
-            if (rx_buffer[2] == 0x5A)
+            if (rx_buffer[2] == 0x5A && rx_buffer[1] == 0x73)
             {
                 DualShock::ParseDigitalButtons(rx_buffer, current_button_states);
                 DualShock::ParseAnalogButtons(rx_buffer, current_button_states);
@@ -150,20 +150,23 @@ namespace adrian
         // TODO@adrian: wait?
 
         // Enable Motor Commands
-        this->SendCommand(+enable_motor_command, +rx_buffer, sizeof(enable_motor_command));
+        // this->SendCommand(+enable_motor_command, +rx_buffer, sizeof(enable_motor_command));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Configure Pressure Sensing
-        this->SendCommand(+config_pressure_values, +rx_buffer, sizeof(config_pressure_values));
+        // this->SendCommand(+config_pressure_values, +rx_buffer, sizeof(config_pressure_values));
         // TODO@adrian: error checking
         // TODO@adrian: wait?
 
         // Exit Config Mode
         this->SendCommand(+exit_config_mode, +rx_buffer, sizeof(exit_config_mode));
-        // TODO@adrian: error checking
+        m_analog_enabled = (
+            rx_buffer[1] == 0xF3 &&
+            rx_buffer[2] == 0x5A
+        );
 
-        return (m_analog_enabled = true);   // TODO@adrian: not fully implemented
+        return m_analog_enabled;        // TODO@adrian: not fully implemented
     }
 
     // Enter Digital Mode and disable reading pressure values.

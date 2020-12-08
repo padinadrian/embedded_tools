@@ -5,7 +5,7 @@ add_executable(${PROJECT_NAME}_tests
     # Tests
     adrian_debounced_button_test.cpp
     adrian_helpers_test.cpp
-    # adrian_dualshock_test.cpp
+    adrian_dualshock_test.cpp
     adrian_fixed_list_test.cpp
 
     # Sources

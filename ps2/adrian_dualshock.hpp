@@ -70,6 +70,11 @@ namespace adrian
          */
         bool DisableAnalog();
 
+        /**
+         * Check if analog mode is enabled.
+         */
+        bool IsAnalogEnabled() const { return m_analog_enabled; }
+
         /** Parse the digital buttons from the response */
         static void ParseDigitalButtons(
             const uint8_t* digital_bytes,

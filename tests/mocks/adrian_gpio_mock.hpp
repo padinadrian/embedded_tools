@@ -10,7 +10,7 @@
 
 /* ===== Includes ===== */
 #include <gmock/gmock.h>
-#include "spi/adrian_spi.hpp"
+#include "gpio/adrian_gpio.hpp"
 
 namespace adrian
 {
@@ -21,7 +21,7 @@ namespace adrian
     {
     public:
         MOCK_METHOD(void, SetPinMode, (const PinMode mode), (override));
-        MOCK_METHOD(void, Write, (const bool state), (const, override));
+        MOCK_METHOD(void, Write, (const bool state), (override));
         MOCK_METHOD(bool, Read, (), (const, override));
     };
 }
