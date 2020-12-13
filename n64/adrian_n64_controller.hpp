@@ -27,23 +27,23 @@ namespace adrian {
         struct ButtonState
         {
             // Byte 1: first set of buttons
-            bool a:1;
-            bool b:1;
-            bool z:1;
-            bool start:1;
-            bool d_up:1;
-            bool d_down:1;
-            bool d_left:1;
             bool d_right:1;
+            bool d_left:1;
+            bool d_down:1;
+            bool d_up:1;
+            bool start:1;
+            bool z:1;
+            bool b:1;
+            bool a:1;
             // Byte 2: second set of buttons
+            bool c_right:1;
+            bool c_left:1;
+            bool c_down:1;
+            bool c_up:1;
+            bool r:1;
+            bool l:1;
             bool valid:1;
             bool reset:1;
-            bool l:1;
-            bool r:1;
-            bool c_up:1;
-            bool c_down:1;
-            bool c_left:1;
-            bool c_right:1;
             // Byte 3: joystick x value (range -0x50 to 0x50)
             int8_t joy_x;
             // Byte 3: joystick x value (range -0x50 to 0x50)
